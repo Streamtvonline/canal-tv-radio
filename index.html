@@ -6,7 +6,7 @@
   <title>Canal de Televisión y Radio en Línea</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Ocultar barra de tiempo y controles de avance/retroceso */
+    /* Ocultar barra de tiempo y controles de avance/retroceso del reproductor TV */
     video::-webkit-media-controls-timeline,
     video::-webkit-media-controls-current-time-display,
     video::-webkit-media-controls-time-remaining-display,
@@ -86,20 +86,28 @@
         <button onclick="toggleFullScreen()" class="fullscreen-btn">⛶ Pantalla Completa</button>
       </div>
 
-      <div class="text-center text-sm text-gray-400">
-        <p id="current-program-title">Cargando programación continua...</p>
+      <!-- BANNER TIPO SLIDER PUBLICITARIO BAJO EL REPRODUCTOR -->
+      <div class="max-w-4xl mx-auto bg-gray-800 border border-gray-700 rounded-lg p-3 shadow-lg flex items-center justify-between overflow-hidden">
+        <div id="ad-slider-container" class="w-full flex items-center justify-center space-x-4 transition-all duration-500">
+          <img id="ad-slider-img" src="https://i.ibb.co/DP9n4Fh0/Dise-o-sin-t-tulo-4.png" class="h-12 w-auto object-contain">
+          <span id="ad-slider-text" class="text-sm md:text-base font-bold text-yellow-400 tracking-wide">
+            📢 ¡ANÚNCIATE AQUÍ! - TU MARCA AQUÍ 24/7
+          </span>
+        </div>
       </div>
     </section>
 
-    <!-- SECCIÓN RADIO -->
-    <section id="section-radio" class="hidden space-y-6 text-center py-12 bg-gray-800 rounded-xl my-4">
-      <div class="max-w-md mx-auto space-y-4">
-        <div class="w-32 h-32 mx-auto rounded-full bg-gradient-to-tr from-purple-600 to-red-500 flex items-center justify-center shadow-lg">
+    <!-- SECCIÓN RADIO EN LÍNEA CONTINUA -->
+    <section id="section-radio" class="hidden space-y-6 text-center py-12 bg-gray-800 rounded-xl my-4 border border-gray-700 shadow-2xl">
+      <div class="max-w-md mx-auto space-y-4 px-4">
+        <div class="w-32 h-32 mx-auto rounded-full bg-gradient-to-tr from-purple-600 to-red-500 flex items-center justify-center shadow-lg animate-pulse">
           <span class="text-5xl">📻</span>
         </div>
         <h2 class="text-2xl font-bold">Radio En Línea 24 Horas</h2>
-        <p id="radio-status" class="text-gray-400 text-sm">Sintonizando señal continua...</p>
-        <audio id="radio-player" controls class="w-full"></audio>
+        <p id="radio-status" class="text-yellow-400 font-semibold text-sm">Sintonizando programación en vivo...</p>
+        
+        <!-- REPRODUCTOR DE RADIO CONTINUO -->
+        <audio id="radio-player" controls class="w-full rounded-lg"></audio>
       </div>
     </section>
 
@@ -131,10 +139,10 @@
         <p id="login-error" class="text-red-500 text-sm hidden text-center">Credenciales incorrectas.</p>
       </div>
 
-      <!-- CONTENIDO PANEL -->
+      <!-- CONTENIDO PANEL DE CONTROL -->
       <div id="admin-panel" class="hidden space-y-6">
         <div class="flex justify-between items-center border-b border-gray-700 pb-3">
-          <h2 class="text-xl font-bold">Panel de Gestión</h2>
+          <h2 class="text-xl font-bold">Panel de Gestión General</h2>
           <button onclick="logout()" class="bg-gray-700 px-3 py-1 rounded text-xs">Cerrar Sesión</button>
         </div>
 
@@ -146,14 +154,25 @@
         </div>
 
         <!-- PROGRAMACIÓN TV -->
-        <div class="space-y-2">
-          <h3 class="font-bold">📺 Agregar Programación TV (Archive.org)</h3>
+        <div class="space-y-2 bg-gray-900/50 p-4 rounded border border-gray-700">
+          <h3 class="font-bold text-red-400">📺 Programación TV 24/7 (Archive.org MP4)</h3>
           <div class="flex space-x-2">
-            <input type="text" id="tv-title" placeholder="Título" class="w-1/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
+            <input type="text" id="tv-title" placeholder="Título Programa TV" class="w-1/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
             <input type="text" id="tv-url" placeholder="URL directa MP4 de Archive.org" class="w-2/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
-            <button onclick="addTvProgram()" class="bg-green-600 px-4 py-2 rounded font-bold text-sm">Añadir</button>
+            <button onclick="addTvProgram()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-bold text-sm">Añadir</button>
           </div>
-          <ul id="tv-list" class="space-y-1 max-h-32 overflow-y-auto"></ul>
+          <ul id="tv-list" class="space-y-1 max-h-32 overflow-y-auto pt-2"></ul>
+        </div>
+
+        <!-- PROGRAMACIÓN RADIO CONTINUA -->
+        <div class="space-y-2 bg-gray-900/50 p-4 rounded border border-gray-700">
+          <h3 class="font-bold text-purple-400">📻 Programación Radio 24/7 (Archive.org MP3/Audio)</h3>
+          <div class="flex space-x-2">
+            <input type="text" id="radio-title" placeholder="Título Audio/Programa Radio" class="w-1/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
+            <input type="text" id="radio-url" placeholder="URL directa MP3/Audio de Archive.org" class="w-2/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
+            <button onclick="addRadioProgram()" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded font-bold text-sm">Añadir</button>
+          </div>
+          <ul id="radio-list" class="space-y-1 max-h-32 overflow-y-auto pt-2"></ul>
         </div>
 
         <!-- LOGOS Y BANNERS -->
@@ -164,16 +183,16 @@
             <input type="text" id="input-logo" placeholder="URL Directa Logo PNG" class="p-2 bg-gray-700 rounded border border-gray-600 text-sm">
             <input type="text" id="input-banner-top" placeholder="URL Directa Banner GIF/JPG" class="p-2 bg-gray-700 rounded border border-gray-600 text-sm">
           </div>
-          <button onclick="saveBannersAndLogo()" class="bg-blue-600 px-4 py-2 rounded font-bold text-sm">Guardar Cambios</button>
+          <button onclick="saveBannersAndLogo()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded font-bold text-sm">Guardar Cambios</button>
         </div>
 
         <!-- NOTICIAS -->
         <div class="space-y-2">
-          <h3 class="font-bold">📰 Crear Noticia</h3>
+          <h3 class="font-bold">📰 Crear Noticia / Blog</h3>
           <input type="text" id="news-title" placeholder="Título" class="w-full p-2 bg-gray-700 rounded border border-gray-600 text-sm">
           <input type="text" id="news-img" placeholder="URL Imagen" class="w-full p-2 bg-gray-700 rounded border border-gray-600 text-sm">
           <textarea id="news-body" rows="2" placeholder="Contenido..." class="w-full p-2 bg-gray-700 rounded border border-gray-600 text-sm"></textarea>
-          <button onclick="addNews()" class="bg-green-600 px-4 py-2 rounded font-bold text-sm">Publicar</button>
+          <button onclick="addNews()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-bold text-sm">Publicar Noticia</button>
         </div>
       </div>
 
@@ -191,22 +210,24 @@
     const tvPlayer = document.getElementById('tv-player');
     const radioPlayer = document.getElementById('radio-player');
 
+    // Cargar listas guardadas en LocalStorage
     let currentTvIndex = parseInt(localStorage.getItem('tvCurrentIndex')) || 0;
     let tvPlaylist = JSON.parse(localStorage.getItem('tvPlaylist')) || [
       { title: "Programa Demo Archive.org", url: "https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4" }
     ];
 
+    let currentRadioIndex = parseInt(localStorage.getItem('radioCurrentIndex')) || 0;
     let radioPlaylist = JSON.parse(localStorage.getItem('radioPlaylist')) || [
-      { title: "Radio En Vivo Demo", url: "https://archive.org/download/testmp3test/test.mp3" }
+      { title: "Emisión Demo Radio Archive.org", url: "https://archive.org/download/testmp3test/test.mp3" }
     ];
 
+    // LÓGICA DE REPRODUCCIÓN CONTINUA - TV
     function playTv() {
       if (tvPlaylist.length === 0) return;
       if (currentTvIndex >= tvPlaylist.length) currentTvIndex = 0;
 
       const current = tvPlaylist[currentTvIndex];
       tvPlayer.src = current.url;
-      document.getElementById('current-program-title').innerText = "Reproduciendo ahora: " + current.title;
 
       const savedTime = parseFloat(localStorage.getItem('tvCurrentTime')) || 0;
 
@@ -227,7 +248,6 @@
 
     tvPlayer.addEventListener('ended', () => {
       localStorage.setItem('tvCurrentTime', 0);
-      document.getElementById('current-program-title').innerText = "Cargando siguiente programa en 3 segundos...";
       setTimeout(() => {
         currentTvIndex = (currentTvIndex + 1) % tvPlaylist.length;
         localStorage.setItem('tvCurrentIndex', currentTvIndex);
@@ -235,6 +255,43 @@
       }, 3000);
     });
 
+    // LÓGICA DE REPRODUCCIÓN CONTINUA - RADIO 24/7 REPETITIVA
+    function playRadio() {
+      if (radioPlaylist.length === 0) return;
+      if (currentRadioIndex >= radioPlaylist.length) currentRadioIndex = 0;
+
+      const current = radioPlaylist[currentRadioIndex];
+      radioPlayer.src = current.url;
+      document.getElementById('radio-status').innerText = "Sintonizando: " + current.title;
+
+      const savedRadioTime = parseFloat(localStorage.getItem('radioCurrentTime')) || 0;
+
+      radioPlayer.addEventListener('loadedmetadata', function onRadioMetadata() {
+        if (savedRadioTime < radioPlayer.duration) {
+          radioPlayer.currentTime = savedRadioTime;
+        }
+        radioPlayer.removeEventListener('loadedmetadata', onRadioMetadata);
+      });
+
+      radioPlayer.play().catch(() => {});
+    }
+
+    radioPlayer.addEventListener('timeupdate', () => {
+      localStorage.setItem('radioCurrentTime', radioPlayer.currentTime);
+      localStorage.setItem('radioCurrentIndex', currentRadioIndex);
+    });
+
+    radioPlayer.addEventListener('ended', () => {
+      localStorage.setItem('radioCurrentTime', 0);
+      document.getElementById('radio-status').innerText = "Cargando siguiente audio en 3 segundos...";
+      setTimeout(() => {
+        currentRadioIndex = (currentRadioIndex + 1) % radioPlaylist.length;
+        localStorage.setItem('radioCurrentIndex', currentRadioIndex);
+        playRadio();
+      }, 3000);
+    });
+
+    // Pantalla completa TV
     function toggleFullScreen() {
       if (!document.fullscreenElement) {
         if (tvPlayer.requestFullscreen) tvPlayer.requestFullscreen();
@@ -244,6 +301,7 @@
       }
     }
 
+    // Cambiar entre Pestañas (TV / Radio / Noticias)
     function switchTab(tab) {
       document.getElementById('section-tv').classList.add('hidden');
       document.getElementById('section-radio').classList.add('hidden');
@@ -251,6 +309,7 @@
       document.getElementById(`section-${tab}`).classList.remove('hidden');
     }
 
+    // Modal Admin y Autenticación
     function toggleAdminModal() {
       document.getElementById('admin-modal').classList.toggle('hidden');
     }
@@ -273,6 +332,7 @@
       document.getElementById('admin-panel').classList.add('hidden');
     }
 
+    // Gestión de Programas TV en Admin
     function addTvProgram() {
       const title = document.getElementById('tv-title').value;
       const url = document.getElementById('tv-url').value;
@@ -280,22 +340,50 @@
 
       tvPlaylist.push({ title, url });
       localStorage.setItem('tvPlaylist', JSON.stringify(tvPlaylist));
+      document.getElementById('tv-title').value = '';
+      document.getElementById('tv-url').value = '';
       renderAdminLists();
-    }
-
-    function renderAdminLists() {
-      document.getElementById('tv-list').innerHTML = tvPlaylist.map((item, idx) => `
-        <li class="flex justify-between items-center bg-gray-700 p-2 rounded text-xs">
-          <span>${item.title}</span>
-          <button onclick="removeTv(${idx})" class="text-red-400 font-bold">Eliminar</button>
-        </li>
-      `).join('');
     }
 
     function removeTv(idx) {
       tvPlaylist.splice(idx, 1);
       localStorage.setItem('tvPlaylist', JSON.stringify(tvPlaylist));
       renderAdminLists();
+    }
+
+    // Gestión de Programas Radio en Admin
+    function addRadioProgram() {
+      const title = document.getElementById('radio-title').value;
+      const url = document.getElementById('radio-url').value;
+      if (!title || !url) return;
+
+      radioPlaylist.push({ title, url });
+      localStorage.setItem('radioPlaylist', JSON.stringify(radioPlaylist));
+      document.getElementById('radio-title').value = '';
+      document.getElementById('radio-url').value = '';
+      renderAdminLists();
+    }
+
+    function removeRadio(idx) {
+      radioPlaylist.splice(idx, 1);
+      localStorage.setItem('radioPlaylist', JSON.stringify(radioPlaylist));
+      renderAdminLists();
+    }
+
+    function renderAdminLists() {
+      document.getElementById('tv-list').innerHTML = tvPlaylist.map((item, idx) => `
+        <li class="flex justify-between items-center bg-gray-700 p-2 rounded text-xs">
+          <span>📺 ${item.title}</span>
+          <button onclick="removeTv(${idx})" class="text-red-400 font-bold hover:underline">Eliminar</button>
+        </li>
+      `).join('');
+
+      document.getElementById('radio-list').innerHTML = radioPlaylist.map((item, idx) => `
+        <li class="flex justify-between items-center bg-gray-700 p-2 rounded text-xs">
+          <span>📻 ${item.title}</span>
+          <button onclick="removeRadio(${idx})" class="text-red-400 font-bold hover:underline">Eliminar</button>
+        </li>
+      `).join('');
     }
 
     function updateLogoDisplay(url) {
@@ -354,6 +442,25 @@
       `).join('');
     }
 
+    // Animación Slider Publicitario
+    const ads = [
+      { text: "📢 ¡ANÚNCIATE AQUÍ! - TU MARCA AQUÍ 24/7", img: "https://i.ibb.co/DP9n4Fh0/Dise-o-sin-t-tulo-4.png" },
+      { text: "🚀 IMPULSA TU NEGOCIO CON NOSOTROS", img: "https://i.ibb.co/DP9n4Fh0/Dise-o-sin-t-tulo-4.png" }
+    ];
+    let currentAdIndex = 0;
+
+    setInterval(() => {
+      const container = document.getElementById('ad-slider-container');
+      container.style.opacity = '0';
+      setTimeout(() => {
+        currentAdIndex = (currentAdIndex + 1) % ads.length;
+        document.getElementById('ad-slider-text').innerText = ads[currentAdIndex].text;
+        document.getElementById('ad-slider-img').src = ads[currentAdIndex].img;
+        container.style.opacity = '1';
+      }, 500);
+    }, 6000);
+
+    // Inicialización al cargar la página
     window.addEventListener('DOMContentLoaded', () => {
       const logo = localStorage.getItem('channelLogo');
       const bannerTop = localStorage.getItem('bannerTop');
@@ -369,6 +476,7 @@
 
       loadNews();
       playTv();
+      playRadio();
     });
   </script>
 </body>
