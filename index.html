@@ -6,7 +6,7 @@
   <title>Canal de Televisión y Radio en Línea</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Ocultar barra de tiempo y controles de avance/retroceso del reproductor TV */
+    /* Ocultar barra de tiempo y controles de avance/retroceso en TV */
     video::-webkit-media-controls-timeline,
     video::-webkit-media-controls-current-time-display,
     video::-webkit-media-controls-time-remaining-display,
@@ -16,6 +16,17 @@
     }
 
     video::-moz-media-controls-timeline {
+      display: none !important;
+    }
+
+    /* Ocultar barra de tiempo y duraciones en el reproductor de Radio */
+    audio::-webkit-media-controls-timeline,
+    audio::-webkit-media-controls-current-time-display,
+    audio::-webkit-media-controls-time-remaining-display {
+      display: none !important;
+    }
+
+    audio::-moz-media-controls-timeline {
       display: none !important;
     }
 
@@ -69,24 +80,15 @@
     <!-- SECCIÓN TV -->
     <section id="section-tv" class="space-y-4">
       <div class="video-container relative bg-black rounded-lg overflow-hidden shadow-2xl aspect-video max-w-4xl mx-auto border border-gray-800">
-        
-        <!-- LOGO EN LA ESQUINA DEL REPRODUCTOR -->
         <img id="player-watermark" src="" class="absolute top-4 right-4 z-20 h-10 w-auto opacity-80 pointer-events-none select-none hidden">
-        
-        <!-- INSIGNIA EN VIVO -->
         <div class="absolute top-4 left-4 z-20 bg-red-600 text-xs font-bold px-2 py-1 rounded flex items-center space-x-1">
           <span class="w-2 h-2 bg-white rounded-full animate-ping"></span>
           <span>EN VIVO 24/7</span>
         </div>
-
-        <!-- REPRODUCTOR SIN BARRA DE TIEMPO -->
         <video id="tv-player" class="w-full h-full object-contain" autoplay playsinline muted></video>
-
-        <!-- ÚNICO BOTÓN: AGRANDAR / PANTALLA COMPLETA -->
         <button onclick="toggleFullScreen()" class="fullscreen-btn">⛶ Pantalla Completa</button>
       </div>
 
-      <!-- BANNER TIPO SLIDER PUBLICITARIO BAJO EL REPRODUCTOR -->
       <div class="max-w-4xl mx-auto bg-gray-800 border border-gray-700 rounded-lg p-3 shadow-lg flex items-center justify-between overflow-hidden">
         <div id="ad-slider-container" class="w-full flex items-center justify-center space-x-4 transition-all duration-500">
           <img id="ad-slider-img" src="https://i.ibb.co/DP9n4Fh0/Dise-o-sin-t-tulo-4.png" class="h-12 w-auto object-contain">
@@ -97,17 +99,21 @@
       </div>
     </section>
 
-    <!-- SECCIÓN RADIO EN LÍNEA CONTINUA -->
+    <!-- SECCIÓN RADIO EN LÍNEA CONTINUA SIN BARRA DE TIEMPO -->
     <section id="section-radio" class="hidden space-y-6 text-center py-12 bg-gray-800 rounded-xl my-4 border border-gray-700 shadow-2xl">
       <div class="max-w-md mx-auto space-y-4 px-4">
         <div class="w-32 h-32 mx-auto rounded-full bg-gradient-to-tr from-purple-600 to-red-500 flex items-center justify-center shadow-lg animate-pulse">
           <span class="text-5xl">📻</span>
         </div>
         <h2 class="text-2xl font-bold">Radio En Línea 24 Horas</h2>
+        <div class="inline-flex items-center space-x-2 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
+          <span class="w-2 h-2 bg-white rounded-full"></span>
+          <span>TRANSMITIENDO EN VIVO</span>
+        </div>
         <p id="radio-status" class="text-yellow-400 font-semibold text-sm">Sintonizando programación en vivo...</p>
         
-        <!-- REPRODUCTOR DE RADIO CONTINUO -->
-        <audio id="radio-player" controls class="w-full rounded-lg"></audio>
+        <!-- REPRODUCTOR DE RADIO CONTINUO SIN TIEMPO -->
+        <audio id="radio-player" controls autoplay class="w-full rounded-lg"></audio>
       </div>
     </section>
 
@@ -119,12 +125,11 @@
 
   </main>
 
-  <!-- MODAL DEL PANEL DE ADMINISTRACIÓN (PROTEGIDO) -->
+  <!-- MODAL DEL PANEL DE ADMINISTRACIÓN -->
   <div id="admin-modal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-4">
     <div class="bg-gray-800 border border-gray-700 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 rounded-xl space-y-6 relative">
       <button onclick="toggleAdminModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white font-bold text-xl">&times;</button>
       
-      <!-- LOGIN -->
       <div id="login-screen" class="max-w-sm mx-auto space-y-4 py-8">
         <h2 class="text-2xl font-bold text-center">Acceso Administrador</h2>
         <div>
@@ -139,21 +144,18 @@
         <p id="login-error" class="text-red-500 text-sm hidden text-center">Credenciales incorrectas.</p>
       </div>
 
-      <!-- CONTENIDO PANEL DE CONTROL -->
       <div id="admin-panel" class="hidden space-y-6">
         <div class="flex justify-between items-center border-b border-gray-700 pb-3">
           <h2 class="text-xl font-bold">Panel de Gestión General</h2>
           <button onclick="logout()" class="bg-gray-700 px-3 py-1 rounded text-xs">Cerrar Sesión</button>
         </div>
 
-        <!-- OBS STREAM -->
         <div class="bg-gray-900 p-4 rounded border border-gray-700 space-y-2">
           <h3 class="font-bold text-red-400">🔴 Parámetros para OBS Studio</h3>
           <p class="text-xs text-gray-400">Servidor RTMP: <span class="text-yellow-400 font-mono">rtmp://rtmp.stream/live</span></p>
           <p class="text-xs text-gray-400">Clave de Transmisión: <span class="text-yellow-400 font-mono">live_stream_key_2026</span></p>
         </div>
 
-        <!-- PROGRAMACIÓN TV -->
         <div class="space-y-2 bg-gray-900/50 p-4 rounded border border-gray-700">
           <h3 class="font-bold text-red-400">📺 Programación TV 24/7 (Archive.org MP4)</h3>
           <div class="flex space-x-2">
@@ -164,21 +166,18 @@
           <ul id="tv-list" class="space-y-1 max-h-32 overflow-y-auto pt-2"></ul>
         </div>
 
-        <!-- PROGRAMACIÓN RADIO CONTINUA -->
         <div class="space-y-2 bg-gray-900/50 p-4 rounded border border-gray-700">
-          <h3 class="font-bold text-purple-400">📻 Programación Radio 24/7 (Archive.org MP3/Audio)</h3>
+          <h3 class="font-bold text-purple-400">📻 Programación Radio 24/7 (Archive.org MP3)</h3>
           <div class="flex space-x-2">
             <input type="text" id="radio-title" placeholder="Título Audio/Programa Radio" class="w-1/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
-            <input type="text" id="radio-url" placeholder="URL directa MP3/Audio de Archive.org" class="w-2/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
+            <input type="text" id="radio-url" placeholder="URL directa MP3 de Archive.org" class="w-2/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
             <button onclick="addRadioProgram()" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded font-bold text-sm">Añadir</button>
           </div>
           <ul id="radio-list" class="space-y-1 max-h-32 overflow-y-auto pt-2"></ul>
         </div>
 
-        <!-- LOGOS Y BANNERS -->
         <div class="space-y-2">
           <h3 class="font-bold">🖼️ Logo y Banners</h3>
-          <p class="text-xs text-gray-400">Pega aquí el enlace DIRECTO terminado en .png o .jpg</p>
           <div class="grid grid-cols-2 gap-2">
             <input type="text" id="input-logo" placeholder="URL Directa Logo PNG" class="p-2 bg-gray-700 rounded border border-gray-600 text-sm">
             <input type="text" id="input-banner-top" placeholder="URL Directa Banner GIF/JPG" class="p-2 bg-gray-700 rounded border border-gray-600 text-sm">
@@ -186,7 +185,6 @@
           <button onclick="saveBannersAndLogo()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded font-bold text-sm">Guardar Cambios</button>
         </div>
 
-        <!-- NOTICIAS -->
         <div class="space-y-2">
           <h3 class="font-bold">📰 Crear Noticia / Blog</h3>
           <input type="text" id="news-title" placeholder="Título" class="w-full p-2 bg-gray-700 rounded border border-gray-600 text-sm">
@@ -210,7 +208,6 @@
     const tvPlayer = document.getElementById('tv-player');
     const radioPlayer = document.getElementById('radio-player');
 
-    // Cargar listas guardadas en LocalStorage
     let currentTvIndex = parseInt(localStorage.getItem('tvCurrentIndex')) || 0;
     let tvPlaylist = JSON.parse(localStorage.getItem('tvPlaylist')) || [
       { title: "Programa Demo Archive.org", url: "https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4" }
@@ -218,10 +215,9 @@
 
     let currentRadioIndex = parseInt(localStorage.getItem('radioCurrentIndex')) || 0;
     let radioPlaylist = JSON.parse(localStorage.getItem('radioPlaylist')) || [
-      { title: "Emisión Demo Radio Archive.org", url: "https://archive.org/download/testmp3test/test.mp3" }
+      { title: "Disco 70s & 80s Greatest Hits", url: "https://archive.org/download/golden-70s-80s-disco-greatest-dance-floor-classics-ultimate-non-stop-party-hits/GOLDEN%2070s%20%26%2080s%20DISCO%20GREATEST%20DANCE%20FLOOR%20CLASSICS%20ULTIMATE%20NON-STOP%20PARTY%20HITS.mp3" }
     ];
 
-    // LÓGICA DE REPRODUCCIÓN CONTINUA - TV
     function playTv() {
       if (tvPlaylist.length === 0) return;
       if (currentTvIndex >= tvPlaylist.length) currentTvIndex = 0;
@@ -255,14 +251,14 @@
       }, 3000);
     });
 
-    // LÓGICA DE REPRODUCCIÓN CONTINUA - RADIO 24/7 REPETITIVA
+    // REPRODUCCIÓN AUTOMÁTICA CONTINUA DE RADIO
     function playRadio() {
       if (radioPlaylist.length === 0) return;
       if (currentRadioIndex >= radioPlaylist.length) currentRadioIndex = 0;
 
       const current = radioPlaylist[currentRadioIndex];
       radioPlayer.src = current.url;
-      document.getElementById('radio-status').innerText = "Sintonizando: " + current.title;
+      document.getElementById('radio-status').innerText = "Programa actual: " + current.title;
 
       const savedRadioTime = parseFloat(localStorage.getItem('radioCurrentTime')) || 0;
 
@@ -273,7 +269,9 @@
         radioPlayer.removeEventListener('loadedmetadata', onRadioMetadata);
       });
 
-      radioPlayer.play().catch(() => {});
+      radioPlayer.play().catch(() => {
+        console.log("Autoplay de audio en espera de interacción.");
+      });
     }
 
     radioPlayer.addEventListener('timeupdate', () => {
@@ -283,7 +281,7 @@
 
     radioPlayer.addEventListener('ended', () => {
       localStorage.setItem('radioCurrentTime', 0);
-      document.getElementById('radio-status').innerText = "Cargando siguiente audio en 3 segundos...";
+      document.getElementById('radio-status').innerText = "Cargando siguiente tema en 3 segundos...";
       setTimeout(() => {
         currentRadioIndex = (currentRadioIndex + 1) % radioPlaylist.length;
         localStorage.setItem('radioCurrentIndex', currentRadioIndex);
@@ -291,7 +289,6 @@
       }, 3000);
     });
 
-    // Pantalla completa TV
     function toggleFullScreen() {
       if (!document.fullscreenElement) {
         if (tvPlayer.requestFullscreen) tvPlayer.requestFullscreen();
@@ -301,15 +298,17 @@
       }
     }
 
-    // Cambiar entre Pestañas (TV / Radio / Noticias)
     function switchTab(tab) {
       document.getElementById('section-tv').classList.add('hidden');
       document.getElementById('section-radio').classList.add('hidden');
       document.getElementById('section-news').classList.add('hidden');
       document.getElementById(`section-${tab}`).classList.remove('hidden');
+
+      if (tab === 'radio') {
+        playRadio();
+      }
     }
 
-    // Modal Admin y Autenticación
     function toggleAdminModal() {
       document.getElementById('admin-modal').classList.toggle('hidden');
     }
@@ -332,7 +331,6 @@
       document.getElementById('admin-panel').classList.add('hidden');
     }
 
-    // Gestión de Programas TV en Admin
     function addTvProgram() {
       const title = document.getElementById('tv-title').value;
       const url = document.getElementById('tv-url').value;
@@ -351,7 +349,6 @@
       renderAdminLists();
     }
 
-    // Gestión de Programas Radio en Admin
     function addRadioProgram() {
       const title = document.getElementById('radio-title').value;
       const url = document.getElementById('radio-url').value;
@@ -362,6 +359,7 @@
       document.getElementById('radio-title').value = '';
       document.getElementById('radio-url').value = '';
       renderAdminLists();
+      playRadio();
     }
 
     function removeRadio(idx) {
@@ -393,7 +391,6 @@
       if (url && url.trim() !== '') {
         channelLogo.src = url;
         channelLogo.classList.remove('hidden');
-        
         playerWatermark.src = url;
         playerWatermark.classList.remove('hidden');
       } else {
@@ -460,7 +457,6 @@
       }, 500);
     }, 6000);
 
-    // Inicialización al cargar la página
     window.addEventListener('DOMContentLoaded', () => {
       const logo = localStorage.getItem('channelLogo');
       const bannerTop = localStorage.getItem('bannerTop');
