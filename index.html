@@ -6,7 +6,7 @@
   <title>Canal de Televisión y Radio en Línea</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Ocultar barra de tiempo y controles de avance/retroceso en TV */
+    /* Ocultar barra de tiempo en TV */
     video::-webkit-media-controls-timeline,
     video::-webkit-media-controls-current-time-display,
     video::-webkit-media-controls-time-remaining-display,
@@ -57,15 +57,15 @@
 </head>
 <body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
 
-  <!-- CAPA INICIAL PARA DESBLOQUEAR PERMISOS EN MÓVILES -->
+  <!-- CAPA INICIAL PARA ACTIVAR AUDIO EN CELULARES Y PC -->
   <div id="audio-unlock-overlay" class="fixed inset-0 bg-black/90 z-50 flex flex-col items-center justify-center p-6 text-center space-y-4">
     <div class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center animate-bounce shadow-lg">
       <span class="text-4xl">🔊</span>
     </div>
     <h2 class="text-2xl font-bold">Bienvenido a la Transmisión 24/7</h2>
-    <p class="text-gray-300 text-sm max-w-sm">Toca el botón para activar el sonido de la TV y la Radio en tu móvil.</p>
+    <p class="text-gray-300 text-sm max-w-sm">Toca el botón para iniciar la señal y activar el audio en HD.</p>
     <button onclick="unlockAudio()" class="px-8 py-3 bg-red-600 hover:bg-red-700 rounded-full font-bold text-lg shadow-xl transition transform active:scale-95">
-      ▶️ ACTIVAR SEÑAL Y AUDIO
+      ▶️ ENTRAR Y ENCENDER SEÑAL
     </button>
   </div>
 
@@ -97,7 +97,10 @@
           <span class="w-2 h-2 bg-white rounded-full animate-ping"></span>
           <span>EN VIVO 24/7</span>
         </div>
-        <video id="tv-player" class="w-full h-full object-contain" autoplay playsinline webkit-playsinline muted></video>
+        
+        <!-- REPRODUCTOR ÚNICO DE TV -->
+        <video id="tv-player" class="w-full h-full object-contain" playsinline webkit-playsinline muted></video>
+        
         <button onclick="toggleFullScreen()" class="fullscreen-btn">⛶ Pantalla Completa</button>
       </div>
 
@@ -122,11 +125,11 @@
           <span class="w-2 h-2 bg-white rounded-full"></span>
           <span>TRANSMITIENDO EN VIVO</span>
         </div>
-        <p id="radio-status" class="text-yellow-400 font-semibold text-sm">Cargando señal de radio...</p>
+        <p id="radio-status" class="text-yellow-400 font-semibold text-sm">Sintonizando señal de radio...</p>
 
-        <!-- REPRODUCTOR DE AUDIO VISIBLE PARA REPRODUCCIÓN DIRECTA EN CELULARES -->
-        <div class="bg-gray-900 p-4 rounded-xl border border-gray-700 space-y-3">
-          <audio id="radio-player" controls preload="auto" class="w-full"></audio>
+        <!-- REPRODUCTOR INDEPENDIENTE DE RADIO -->
+        <div class="bg-gray-900 p-4 rounded-xl border border-gray-700 shadow-inner">
+          <audio id="radio-player" controls preload="metadata" class="w-full"></audio>
         </div>
       </div>
     </section>
@@ -235,11 +238,10 @@
     function unlockAudio() {
       document.getElementById('audio-unlock-overlay').classList.add('hidden');
       tvPlayer.muted = false;
-      playTv();
-      loadRadioSource();
+      tvPlayer.play().catch(() => {});
     }
 
-    // LÓGICA TV CONTINUA
+    // GESTIÓN DE TV
     function playTv() {
       if (tvPlaylist.length === 0) return;
       if (currentTvIndex >= tvPlaylist.length) currentTvIndex = 0;
@@ -250,7 +252,7 @@
       const savedTime = parseFloat(localStorage.getItem('tvCurrentTime')) || 0;
 
       tvPlayer.addEventListener('loadedmetadata', function onMetadata() {
-        if (savedTime < tvPlayer.duration) {
+        if (savedTime < tvPlayer.duration && tvPlayer.currentTime === 0) {
           tvPlayer.currentTime = savedTime;
         }
         tvPlayer.removeEventListener('loadedmetadata', onMetadata);
@@ -273,7 +275,7 @@
       }, 3000);
     });
 
-    // LÓGICA RADIO CONTINUA
+    // GESTIÓN DE RADIO
     function loadRadioSource() {
       if (radioPlaylist.length === 0) return;
       if (currentRadioIndex >= radioPlaylist.length) currentRadioIndex = 0;
@@ -326,7 +328,12 @@
       document.getElementById(`section-${tab}`).classList.remove('hidden');
 
       if (tab === 'radio') {
+        tvPlayer.muted = true; // Silenciar TV para darle audio a la radio
         loadRadioSource();
+      } else if (tab === 'tv') {
+        radioPlayer.pause(); // Pausar radio al volver a la TV
+        tvPlayer.muted = false;
+        tvPlayer.play().catch(() => {});
       }
     }
 
