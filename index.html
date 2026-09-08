@@ -19,6 +19,17 @@
       display: none !important;
     }
 
+    /* Ocultar barra de tiempo en Radio */
+    audio::-webkit-media-controls-timeline,
+    audio::-webkit-media-controls-current-time-display,
+    audio::-webkit-media-controls-time-remaining-display {
+      display: none !important;
+    }
+
+    audio::-moz-media-controls-timeline {
+      display: none !important;
+    }
+
     .video-container {
       position: relative;
     }
@@ -46,7 +57,7 @@
 </head>
 <body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
 
-  <!-- CAPA INICIAL PARA ACTIVAR AUDIO -->
+  <!-- CAPA INICIAL PARA ACTIVAR AUDIO EN CELULARES Y PC -->
   <div id="audio-unlock-overlay" class="fixed inset-0 bg-black/90 z-50 flex flex-col items-center justify-center p-6 text-center space-y-4">
     <div class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center animate-bounce shadow-lg">
       <span class="text-4xl">🔊</span>
@@ -103,22 +114,22 @@
       </div>
     </section>
 
-    <!-- SECCIÓN RADIO EN LÍNEA CONTINUA (REPRODUCTOR EMBEBIDO NATIVO) -->
-    <section id="section-radio" class="hidden space-y-6 text-center py-8 bg-gray-800 rounded-xl my-4 border border-gray-700 shadow-2xl">
+    <!-- SECCIÓN RADIO EN LÍNEA CONTINUA -->
+    <section id="section-radio" class="hidden space-y-6 text-center py-12 bg-gray-800 rounded-xl my-4 border border-gray-700 shadow-2xl">
       <div class="max-w-md mx-auto space-y-4 px-4">
-        <div class="w-24 h-24 mx-auto rounded-full bg-gradient-to-tr from-purple-600 to-red-500 flex items-center justify-center shadow-lg animate-pulse">
-          <span class="text-4xl">📻</span>
+        <div class="w-32 h-32 mx-auto rounded-full bg-gradient-to-tr from-purple-600 to-red-500 flex items-center justify-center shadow-lg animate-pulse">
+          <span class="text-5xl">📻</span>
         </div>
         <h2 class="text-2xl font-bold">Radio En Línea 24 Horas</h2>
         <div class="inline-flex items-center space-x-2 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
           <span class="w-2 h-2 bg-white rounded-full"></span>
           <span>TRANSMITIENDO EN VIVO</span>
         </div>
-        <p id="radio-status" class="text-yellow-400 font-semibold text-sm">Cargando señal de radio...</p>
+        <p id="radio-status" class="text-yellow-400 font-semibold text-sm">Sintonizando señal de radio...</p>
 
-        <!-- CONTENEDOR EMBEBIDO MÓVIL COMPATIBLE -->
-        <div class="w-full bg-black rounded-lg overflow-hidden border border-gray-700 p-2 shadow-inner">
-          <iframe id="radio-iframe" src="" width="100%" height="80" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen class="rounded"></iframe>
+        <!-- REPRODUCTOR INDEPENDIENTE DE RADIO -->
+        <div class="bg-gray-900 p-4 rounded-xl border border-gray-700 shadow-inner">
+          <audio id="radio-player" controls preload="metadata" class="w-full"></audio>
         </div>
       </div>
     </section>
@@ -173,10 +184,10 @@
         </div>
 
         <div class="space-y-2 bg-gray-900/50 p-4 rounded border border-gray-700">
-          <h3 class="font-bold text-purple-400">📻 Programación Radio 24/7 (Archive.org MP3 o Enlace)</h3>
+          <h3 class="font-bold text-purple-400">📻 Programación Radio 24/7 (Archive.org MP3)</h3>
           <div class="flex space-x-2">
             <input type="text" id="radio-title" placeholder="Título Audio Radio" class="w-1/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
-            <input type="text" id="radio-url" placeholder="URL de Archive.org" class="w-2/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
+            <input type="text" id="radio-url" placeholder="URL directa MP3" class="w-2/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
             <button onclick="addRadioProgram()" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded font-bold text-sm">Añadir</button>
           </div>
           <ul id="radio-list" class="space-y-1 max-h-32 overflow-y-auto pt-2"></ul>
@@ -212,6 +223,7 @@
     const ADMIN_PASS = "programacion26%";
 
     const tvPlayer = document.getElementById('tv-player');
+    const radioPlayer = document.getElementById('radio-player');
 
     let currentTvIndex = parseInt(localStorage.getItem('tvCurrentIndex')) || 0;
     let tvPlaylist = JSON.parse(localStorage.getItem('tvPlaylist')) || [
@@ -220,7 +232,7 @@
 
     let currentRadioIndex = parseInt(localStorage.getItem('radioCurrentIndex')) || 0;
     let radioPlaylist = JSON.parse(localStorage.getItem('radioPlaylist')) || [
-      { title: "Disco 70s & 80s Greatest Hits", url: "https://archive.org/details/golden-70s-80s-disco-greatest-dance-floor-classics-ultimate-non-stop-party-hits" }
+      { title: "Disco 70s & 80s Greatest Hits", url: "https://archive.org/download/golden-70s-80s-disco-greatest-dance-floor-classics-ultimate-non-stop-party-hits/GOLDEN%2070s%20%26%2080s%20DISCO%20GREATEST%20DANCE%20FLOOR%20CLASSICS%20ULTIMATE%20NON-STOP%20PARTY%20HITS.mp3" }
     ];
 
     function unlockAudio() {
@@ -263,34 +275,42 @@
       }, 3000);
     });
 
-    // GESTIÓN DE RADIO MÓVIL COMPATIBLE (IFRAME)
+    // GESTIÓN DE RADIO
     function loadRadioSource() {
       if (radioPlaylist.length === 0) return;
       if (currentRadioIndex >= radioPlaylist.length) currentRadioIndex = 0;
 
       const current = radioPlaylist[currentRadioIndex];
-      let rawUrl = current.url;
-      let embedUrl = rawUrl;
-
-      // Convertir automáticamente cualquier formato de URL de Archive.org a Embed
-      if (rawUrl.includes('archive.org')) {
-        let identifier = "";
-        if (rawUrl.includes('/details/')) {
-          identifier = rawUrl.split('/details/')[1].split('/')[0];
-        } else if (rawUrl.includes('/download/')) {
-          identifier = rawUrl.split('/download/')[1].split('/')[0];
-        } else {
-          identifier = rawUrl.split('/').pop();
-        }
-        embedUrl = `https://archive.org/embed/${identifier}`;
-      }
-
-      const iframe = document.getElementById('radio-iframe');
-      if (iframe && iframe.src !== embedUrl) {
-        iframe.src = embedUrl;
+      if (radioPlayer.src !== current.url) {
+        radioPlayer.src = current.url;
       }
       document.getElementById('radio-status').innerText = "Programa actual: " + current.title;
+
+      const savedRadioTime = parseFloat(localStorage.getItem('radioCurrentTime')) || 0;
+
+      radioPlayer.addEventListener('loadedmetadata', function onRadioMetadata() {
+        if (savedRadioTime < radioPlayer.duration && radioPlayer.currentTime === 0) {
+          radioPlayer.currentTime = savedRadioTime;
+        }
+        radioPlayer.removeEventListener('loadedmetadata', onRadioMetadata);
+      });
     }
+
+    radioPlayer.addEventListener('timeupdate', () => {
+      localStorage.setItem('radioCurrentTime', radioPlayer.currentTime);
+      localStorage.setItem('radioCurrentIndex', currentRadioIndex);
+    });
+
+    radioPlayer.addEventListener('ended', () => {
+      localStorage.setItem('radioCurrentTime', 0);
+      document.getElementById('radio-status').innerText = "Cargando siguiente tema en 3 segundos...";
+      setTimeout(() => {
+        currentRadioIndex = (currentRadioIndex + 1) % radioPlaylist.length;
+        localStorage.setItem('radioCurrentIndex', currentRadioIndex);
+        loadRadioSource();
+        radioPlayer.play().catch(() => {});
+      }, 3000);
+    });
 
     function toggleFullScreen() {
       if (!document.fullscreenElement) {
@@ -308,9 +328,10 @@
       document.getElementById(`section-${tab}`).classList.remove('hidden');
 
       if (tab === 'radio') {
-        tvPlayer.muted = true;
+        tvPlayer.muted = true; // Silenciar TV para darle audio a la radio
         loadRadioSource();
       } else if (tab === 'tv') {
+        radioPlayer.pause(); // Pausar radio al volver a la TV
         tvPlayer.muted = false;
         tvPlayer.play().catch(() => {});
       }
