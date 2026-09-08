@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canal de Televisión y Radio en Línea</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
+
+  <!-- ENCABEZADO Y NAVEGACIÓN -->
+  <header class="bg-gray-800 border-b border-gray-700 p-4 flex justify-between items-center sticky top-0 z-50">
+    <div class="flex items-center space-x-3">
+      <img id="channel-logo" src="https://via.placeholder.com/120x50?text=LOGO" alt="Logo Canal" class="h-10 w-auto object-contain">
+      <h1 class="text-xl font-bold hidden sm:inline">Mi Canal TV & Radio</h1>
+    </div>
+    <nav class="flex space-x-2">
+      <button id="tab-tv" onclick="switchTab('tv')" class="px-4 py-2 bg-red-600 rounded-lg font-semibold hover:bg-red-700 transition">📺 TV en Vivo</button>
+      <button id="tab-radio" onclick="switchTab('radio')" class="px-4 py-2 bg-gray-700 rounded-lg font-semibold hover:bg-gray-600 transition">📻 Radio Online</button>
+      <button id="tab-news" onclick="switchTab('news')" class="px-4 py-2 bg-gray-700 rounded-lg font-semibold hover:bg-gray-600 transition">📰 Noticias</button>
+      <a href="admin.html" class="px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-sm text-gray-300 hover:bg-gray-700">⚙️ Admin</a>
+    </nav>
+  </header>
+
+  <!-- BANNER PUBLICITARIO SUPERIOR -->
+  <div id="top-banner-container" class="w-full bg-black py-2 text-center">
+    <!-- El banner estático o animado se carga dinámicamente -->
+  </div>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="flex-1 max-w-6xl w-full mx-auto p-4">
+
+    <!-- SECCIÓN TV -->
+    <section id="section-tv" class="space-y-4">
+      <div class="relative bg-black rounded-lg overflow-hidden shadow-2xl aspect-video max-w-4xl mx-auto border border-gray-800">
+        <!-- MARCA DE AGUA / LOGO SUPERIOR DERECHO (TAMAÑO MODERADO) -->
+        <img id="player-watermark" src="https://via.placeholder.com/80x40?text=LOGO" class="absolute top-4 right-4 z-20 h-10 w-auto opacity-80 pointer-events-none select-none">
+        
+        <!-- REPRODUCTOR DE VIDEO 24/7 -->
+        <video id="tv-player" class="w-full h-full object-contain" controls autoplay playsinline muted></video>
+        
+        <!-- OVERLAY DE REPRODUCCIÓN VIVO -->
+        <div class="absolute top-4 left-4 z-20 bg-red-600 text-xs font-bold px-2 py-1 rounded flex items-center space-x-1">
+          <span class="w-2 h-2 bg-white rounded-full animate-ping"></span>
+          <span>EN VIVO 24/7</span>
+        </div>
+      </div>
+      <div class="text-center text-sm text-gray-400">
+        <p id="current-program-title">Cargando programación continua...</p>
+      </div>
+    </section>
+
+    <!-- SECCIÓN RADIO -->
+    <section id="section-radio" class="hidden space-y-6 text-center py-12 bg-gray-800 rounded-xl my-4">
+      <div class="max-w-md mx-auto space-y-4">
+        <div class="w-32 h-32 mx-auto rounded-full bg-gradient-to-tr from-purple-600 to-red-500 flex items-center justify-center shadow-lg">
+          <span class="text-5xl">📻</span>
+        </div>
+        <h2 class="text-2xl font-bold">Radio En Línea 24 Horas</h2>
+        <p id="radio-status" class="text-gray-400 text-sm">Sintonizando señal continua...</p>
+        <audio id="radio-player" controls class="w-full"></audio>
+      </div>
+    </section>
+
+    <!-- BANNER PUBLICITARIO INTERMEDIO ANIMADO -->
+    <div id="middle-banner-container" class="my-6 text-center"></div>
+
+    <!-- SECCIÓN NOTICIAS / BLOG -->
+    <section id="section-news" class="hidden space-y-6">
+      <h2 class="text-2xl font-bold border-b border-gray-700 pb-2">Últimas Noticias y Blog</h2>
+      <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Se genera desde JavaScript -->
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="bg-gray-800 text-center py-4 text-xs text-gray-500 border-t border-gray-700">
+    &copy; 2026 Canal de TV & Radio en Línea - Transmisión Continua
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

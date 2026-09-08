@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración - TV & Radio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white p-6">
+
+  <!-- FORMULARIO DE LOGIN -->
+  <div id="login-screen" class="max-w-md mx-auto bg-gray-800 p-8 rounded-xl shadow-lg border border-gray-700 mt-20">
+    <h2 class="text-2xl font-bold mb-6 text-center">Acceso al Panel</h2>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm font-medium mb-1">Usuario</label>
+        <input type="text" id="login-user" class="w-full p-2 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:border-red-500">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Contraseña</label>
+        <input type="password" id="login-pass" class="w-full p-2 bg-gray-700 rounded border border-gray-600 focus:outline-none focus:border-red-500">
+      </div>
+      <button onclick="login()" class="w-full bg-red-600 hover:bg-red-700 py-2 rounded font-bold transition">Ingresar</button>
+      <p id="login-error" class="text-red-500 text-sm hidden text-center">Usuario o contraseña incorrectos.</p>
+    </div>
+  </div>
+
+  <!-- CONTENIDO DEL PANEL DE CONTROL -->
+  <div id="admin-panel" class="hidden max-w-5xl mx-auto space-y-8">
+    <div class="flex justify-between items-center border-b border-gray-700 pb-4">
+      <h1 class="text-3xl font-bold">Panel de Control de Programación</h1>
+      <button onclick="logout()" class="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded text-sm">Cerrar Sesión</button>
+    </div>
+
+    <!-- TRANSMISIÓN EN VIVO CON OBS -->
+    <section class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+      <h2 class="text-xl font-bold mb-4 text-red-400">🔴 Parámetros para Transmisión en Vivo (OBS Studio)</h2>
+      <p class="text-sm text-gray-300 mb-4">Para transmitir en vivo a través de OBS usando GitHub Pages/Archive.org o Servidores RTMP/HLS gratuitos:</p>
+      <div class="bg-gray-900 p-4 rounded font-mono text-sm space-y-2 border border-gray-700">
+        <p><span class="text-yellow-400">Servidor RTMP:</span> rtmp://rtmp.stream/live (O tu servidor HLS)</p>
+        <p><span class="text-yellow-400">Clave de Transmisión:</span> live_stream_key_2026</p>
+        <p><span class="text-yellow-400">Enlace reproductor HLS (.m3u8):</span> https://tu-servidor.com/hls/live.m3u8</p>
+      </div>
+      <div class="mt-4">
+        <label class="block text-sm mb-1">Enlace de la Transmisión en Vivo Actual (.m3u8 o MP4 directo):</label>
+        <input type="text" id="live-stream-url" placeholder="https://..." class="w-full p-2 bg-gray-700 rounded border border-gray-600">
+        <button onclick="saveLiveStream()" class="mt-2 bg-red-600 px-4 py-2 rounded font-semibold text-sm">Activar/Actualizar Señal En Vivo</button>
+      </div>
+    </section>
+
+    <!-- PROGRAMACIÓN 24/7 (ARCHIVE.ORG) -->
+    <section class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+      <h2 class="text-xl font-bold mb-4">📺 Lista de Programación TV (Archive.org MP4)</h2>
+      <p class="text-xs text-gray-400 mb-4">Pega los enlaces directos de los videos alojados en Archive.org. Transición ultra rápida (3s entre videos).</p>
+      <div class="flex space-x-2 mb-4">
+        <input type="text" id="tv-title" placeholder="Título del Video" class="w-1/3 p-2 bg-gray-700 rounded border border-gray-600">
+        <input type="text" id="tv-url" placeholder="URL directa de Archive.org (https://archive.org/download/.../video.mp4)" class="w-2/3 p-2 bg-gray-700 rounded border border-gray-600">
+        <button onclick="addTvProgram()" class="bg-green-600 px-4 py-2 rounded font-bold">Añadir</button>
+      </div>
+      <ul id="tv-list" class="space-y-2 max-h-48 overflow-y-auto"></ul>
+    </section>
+
+    <!-- PROGRAMACIÓN RADIO (ARCHIVE.ORG) -->
+    <section class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+      <h2 class="text-xl font-bold mb-4">📻 Lista de Programación Radio (Archive.org MP3)</h2>
+      <div class="flex space-x-2 mb-4">
+        <input type="text" id="radio-title" placeholder="Título del Programa/Audio" class="w-1/3 p-2 bg-gray-700 rounded border border-gray-600">
+        <input type="text" id="radio-url" placeholder="URL directa de Archive.org (https://archive.org/download/.../audio.mp3)" class="w-2/3 p-2 bg-gray-700 rounded border border-gray-600">
+        <button onclick="addRadioProgram()" class="bg-green-600 px-4 py-2 rounded font-bold">Añadir</button>
+      </div>
+      <ul id="radio-list" class="space-y-2 max-h-48 overflow-y-auto"></ul>
+    </section>
+
+    <!-- BANNERS PUBLICITARIOS Y LOGO -->
+    <section class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+      <h2 class="text-xl font-bold mb-4">🖼️ Configuración de Logo y Banners Animados/Estáticos</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm mb-1">URL del Logo del Canal (PNG sin fondo):</label>
+          <input type="text" id="input-logo" class="w-full p-2 bg-gray-700 rounded border border-gray-600">
+        </div>
+        <div>
+          <label class="block text-sm mb-1">URL Banner Superior (GIF o Imagen):</label>
+          <input type="text" id="input-banner-top" class="w-full p-2 bg-gray-700 rounded border border-gray-600">
+        </div>
+      </div>
+      <button onclick="saveBannersAndLogo()" class="mt-4 bg-blue-600 px-4 py-2 rounded font-bold">Guardar Cambios Visuales</button>
+    </section>
+
+    <!-- GESTOR DE NOTICIAS -->
+    <section class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+      <h2 class="text-xl font-bold mb-4">📰 Publicar Noticia / Blog</h2>
+      <div class="space-y-3">
+        <input type="text" id="news-title" placeholder="Título de la Noticia" class="w-full p-2 bg-gray-700 rounded border border-gray-600">
+        <input type="text" id="news-img" placeholder="URL de la Foto principal" class="w-full p-2 bg-gray-700 rounded border border-gray-600">
+        <textarea id="news-body" rows="3" placeholder="Contenido de la noticia o blog..." class="w-full p-2 bg-gray-700 rounded border border-gray-600"></textarea>
+        <button onclick="addNews()" class="bg-green-600 px-4 py-2 rounded font-bold">Publicar Noticia</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
