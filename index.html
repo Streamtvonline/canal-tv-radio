@@ -49,8 +49,8 @@
   <!-- ENCABEZADO Y NAVEGACIÓN -->
   <header class="bg-gray-800 border-b border-gray-700 p-4 flex justify-between items-center sticky top-0 z-50">
     <div class="flex items-center space-x-3">
-      <img id="channel-logo" src="https://via.placeholder.com/120x50?text=LOGO" alt="Logo Canal" class="h-10 w-auto object-contain">
-      <h1 class="text-xl font-bold hidden sm:inline">Mi Canal TV & Radio</h1>
+      <img id="channel-logo" src="" alt="Logo" class="h-10 w-auto object-contain hidden">
+      <h1 class="text-xl font-bold hidden sm:inline" id="channel-title">Mi Canal TV & Radio</h1>
     </div>
     <nav class="flex space-x-2">
       <button onclick="switchTab('tv')" class="px-4 py-2 bg-red-600 rounded-lg font-semibold hover:bg-red-700 transition">📺 TV en Vivo</button>
@@ -61,7 +61,7 @@
   </header>
 
   <!-- BANNER PUBLICITARIO SUPERIOR -->
-  <div id="top-banner-container" class="w-full bg-black py-2 text-center"></div>
+  <div id="top-banner-container" class="w-full bg-black text-center py-1"></div>
 
   <!-- CONTENIDO PRINCIPAL -->
   <main class="flex-1 max-w-6xl w-full mx-auto p-4">
@@ -71,7 +71,7 @@
       <div class="video-container relative bg-black rounded-lg overflow-hidden shadow-2xl aspect-video max-w-4xl mx-auto border border-gray-800">
         
         <!-- LOGO EN LA ESQUINA DEL REPRODUCTOR -->
-        <img id="player-watermark" src="https://via.placeholder.com/80x40?text=LOGO" class="absolute top-4 right-4 z-20 h-10 w-auto opacity-80 pointer-events-none select-none">
+        <img id="player-watermark" src="" class="absolute top-4 right-4 z-20 h-10 w-auto opacity-80 pointer-events-none select-none hidden">
         
         <!-- INSIGNIA EN VIVO -->
         <div class="absolute top-4 left-4 z-20 bg-red-600 text-xs font-bold px-2 py-1 rounded flex items-center space-x-1">
@@ -159,9 +159,10 @@
         <!-- LOGOS Y BANNERS -->
         <div class="space-y-2">
           <h3 class="font-bold">🖼️ Logo y Banners</h3>
+          <p class="text-xs text-gray-400">Pega aquí el enlace DIRECTO terminado en .png o .jpg</p>
           <div class="grid grid-cols-2 gap-2">
-            <input type="text" id="input-logo" placeholder="URL Logo PNG" class="p-2 bg-gray-700 rounded border border-gray-600 text-sm">
-            <input type="text" id="input-banner-top" placeholder="URL Banner GIF/Imagen" class="p-2 bg-gray-700 rounded border border-gray-600 text-sm">
+            <input type="text" id="input-logo" placeholder="URL Directa Logo PNG" class="p-2 bg-gray-700 rounded border border-gray-600 text-sm">
+            <input type="text" id="input-banner-top" placeholder="URL Directa Banner GIF/JPG" class="p-2 bg-gray-700 rounded border border-gray-600 text-sm">
           </div>
           <button onclick="saveBannersAndLogo()" class="bg-blue-600 px-4 py-2 rounded font-bold text-sm">Guardar Cambios</button>
         </div>
@@ -199,7 +200,6 @@
       { title: "Radio En Vivo Demo", url: "https://archive.org/download/testmp3test/test.mp3" }
     ];
 
-    // Cargar y reproducir TV manteniendo el tiempo exacto al recargar
     function playTv() {
       if (tvPlaylist.length === 0) return;
       if (currentTvIndex >= tvPlaylist.length) currentTvIndex = 0;
@@ -220,13 +220,11 @@
       tvPlayer.play().catch(() => {});
     }
 
-    // Guardar segundo exacto en tiempo real
     tvPlayer.addEventListener('timeupdate', () => {
       localStorage.setItem('tvCurrentTime', tvPlayer.currentTime);
       localStorage.setItem('tvCurrentIndex', currentTvIndex);
     });
 
-    // Pasar al siguiente video con 3 segundos de pausa
     tvPlayer.addEventListener('ended', () => {
       localStorage.setItem('tvCurrentTime', 0);
       document.getElementById('current-program-title').innerText = "Cargando siguiente programa en 3 segundos...";
@@ -237,7 +235,6 @@
       }, 3000);
     });
 
-    // Pantalla completa
     function toggleFullScreen() {
       if (!document.fullscreenElement) {
         if (tvPlayer.requestFullscreen) tvPlayer.requestFullscreen();
@@ -247,7 +244,6 @@
       }
     }
 
-    // Cambiar de Pestañas
     function switchTab(tab) {
       document.getElementById('section-tv').classList.add('hidden');
       document.getElementById('section-radio').classList.add('hidden');
@@ -255,7 +251,6 @@
       document.getElementById(`section-${tab}`).classList.remove('hidden');
     }
 
-    // Modales y Login Admin
     function toggleAdminModal() {
       document.getElementById('admin-modal').classList.toggle('hidden');
     }
@@ -303,20 +298,35 @@
       renderAdminLists();
     }
 
-    function saveBannersAndLogo() {
-      const logo = document.getElementById('input-logo').value;
-      const bannerTop = document.getElementById('input-banner-top').value;
+    function updateLogoDisplay(url) {
+      const channelLogo = document.getElementById('channel-logo');
+      const playerWatermark = document.getElementById('player-watermark');
 
-      if (logo) {
+      if (url && url.trim() !== '') {
+        channelLogo.src = url;
+        channelLogo.classList.remove('hidden');
+        
+        playerWatermark.src = url;
+        playerWatermark.classList.remove('hidden');
+      } else {
+        channelLogo.classList.add('hidden');
+        playerWatermark.classList.add('hidden');
+      }
+    }
+
+    function saveBannersAndLogo() {
+      const logo = document.getElementById('input-logo').value.trim();
+      const bannerTop = document.getElementById('input-banner-top').value.trim();
+
+      if (logo !== '') {
         localStorage.setItem('channelLogo', logo);
-        document.getElementById('channel-logo').src = logo;
-        document.getElementById('player-watermark').src = logo;
+        updateLogoDisplay(logo);
       }
-      if (bannerTop) {
+      if (bannerTop !== '') {
         localStorage.setItem('bannerTop', bannerTop);
-        document.getElementById('top-banner-container').innerHTML = `<img src="${bannerTop}" class="max-h-20 mx-auto rounded">`;
+        document.getElementById('top-banner-container').innerHTML = `<img src="${bannerTop}" class="max-h-24 mx-auto rounded">`;
       }
-      alert("Guardado correctamente");
+      alert("Configuración de Logo y Banner guardada correctamente.");
     }
 
     function addNews() {
@@ -344,17 +354,17 @@
       `).join('');
     }
 
-    // Inicialización
     window.addEventListener('DOMContentLoaded', () => {
       const logo = localStorage.getItem('channelLogo');
       const bannerTop = localStorage.getItem('bannerTop');
 
       if (logo) {
-        document.getElementById('channel-logo').src = logo;
-        document.getElementById('player-watermark').src = logo;
+        updateLogoDisplay(logo);
+        document.getElementById('input-logo').value = logo;
       }
       if (bannerTop) {
-        document.getElementById('top-banner-container').innerHTML = `<img src="${bannerTop}" class="max-h-20 mx-auto rounded">`;
+        document.getElementById('top-banner-container').innerHTML = `<img src="${bannerTop}" class="max-h-24 mx-auto rounded">`;
+        document.getElementById('input-banner-top').value = bannerTop;
       }
 
       loadNews();
