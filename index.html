@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Canal de Televisión y Radio en Línea</title>
+  <title>CANAL TV & RADIO (EN LÍNEA 24/7)</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* Ocultar barra de tiempo en TV */
+    /* Ocultar controles nativos de video */
     video::-webkit-media-controls-timeline,
     video::-webkit-media-controls-current-time-display,
     video::-webkit-media-controls-time-remaining-display,
@@ -26,60 +26,57 @@
       display: none !important;
     }
 
-    audio::-moz-media-controls-timeline {
-      display: none !important;
-    }
-
-    .video-container {
-      position: relative;
-    }
-
     .fullscreen-btn {
       position: absolute;
-      bottom: 12px;
+      top: 12px;
       right: 12px;
       z-index: 30;
-      background: rgba(0, 0, 0, 0.7);
+      background: rgba(0, 0, 0, 0.75);
       border: 1px solid rgba(255, 255, 255, 0.3);
       color: white;
-      padding: 6px 14px;
-      border-radius: 6px;
+      padding: 4px 10px;
+      border-radius: 4px;
       cursor: pointer;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: bold;
       transition: background 0.2s;
     }
 
     .fullscreen-btn:hover {
-      background: rgba(0, 0, 0, 0.95);
+      background: rgba(220, 38, 38, 0.9);
     }
   </style>
 </head>
-<body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
+<body class="bg-gray-950 text-white font-sans min-h-screen flex flex-col justify-between">
 
-  <!-- CAPA INICIAL PARA ACTIVAR AUDIO -->
-  <div id="audio-unlock-overlay" class="fixed inset-0 bg-black/90 z-50 flex flex-col items-center justify-center p-6 text-center space-y-4">
-    <div class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center animate-bounce shadow-lg">
-      <span class="text-4xl">🔊</span>
+  <!-- OVERLAY INICIAL DESBLOQUEO DE AUDIO -->
+  <div id="audio-unlock-overlay" class="fixed inset-0 bg-black/95 z-50 flex flex-col items-center justify-center p-6 text-center space-y-4">
+    <div class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center animate-bounce shadow-2xl">
+      <span class="text-4xl">▶️</span>
     </div>
-    <h2 class="text-2xl font-bold">Bienvenido a la Transmisión 24/7</h2>
-    <p class="text-gray-300 text-sm max-w-sm">Toca el botón para iniciar la señal y activar el audio en HD.</p>
-    <button onclick="unlockAudio()" class="px-8 py-3 bg-red-600 hover:bg-red-700 rounded-full font-bold text-lg shadow-xl transition transform active:scale-95">
-      ▶️ ENTRAR Y ENCENDER SEÑAL
+    <h2 class="text-3xl font-black uppercase tracking-wider">CANAL TV & RADIO</h2>
+    <p class="text-gray-300 text-sm max-w-sm">Toca el botón para conectar a la transmisión en vivo 24/7.</p>
+    <button onclick="unlockAudio()" class="px-8 py-3 bg-red-600 hover:bg-red-700 rounded-full font-extrabold text-lg shadow-xl transition transform active:scale-95">
+      ENTRAR A LA TRANSMISIÓN
     </button>
   </div>
 
-  <!-- ENCABEZADO Y NAVEGACIÓN -->
-  <header class="bg-gray-800 border-b border-gray-700 p-4 flex justify-between items-center sticky top-0 z-40">
+  <!-- ENCABEZADO Y NAVEGACIÓN SUPERIOR -->
+  <header class="bg-blue-950 border-b border-blue-900 px-6 py-3 flex justify-between items-center sticky top-0 z-40 shadow-lg">
     <div class="flex items-center space-x-3">
-      <img id="channel-logo" src="" alt="Logo" class="h-10 w-auto object-contain hidden">
-      <h1 class="text-xl font-bold hidden sm:inline" id="channel-title">Mi Canal TV & Radio</h1>
+      <img id="channel-logo" src="" alt="Logo" class="h-9 w-auto object-contain hidden">
+      <div class="flex flex-col">
+        <h1 class="text-lg font-black tracking-wider uppercase text-white flex items-center space-x-2" id="channel-title">
+          <span>CANAL TV & RADIO</span>
+        </h1>
+        <span class="text-[10px] text-red-500 font-bold uppercase tracking-widest">(EN LÍNEA 24/7)</span>
+      </div>
     </div>
     <nav class="flex space-x-2">
-      <button onclick="switchTab('tv')" class="px-3 py-2 bg-red-600 rounded-lg text-sm font-semibold hover:bg-red-700 transition">📺 TV</button>
-      <button onclick="switchTab('radio')" class="px-3 py-2 bg-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-600 transition">📻 Radio</button>
-      <button onclick="switchTab('news')" class="px-3 py-2 bg-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-600 transition">📰 Noticias</button>
-      <button onclick="toggleAdminModal()" class="px-2 py-2 bg-gray-800 border border-gray-600 rounded-lg text-xs text-gray-300 hover:bg-gray-700">⚙️ Admin</button>
+      <button onclick="switchTab('tv')" class="px-4 py-2 bg-red-600 rounded text-xs font-black tracking-wider hover:bg-red-700 transition uppercase shadow">📺 TV en Vivo</button>
+      <button onclick="switchTab('radio')" class="px-4 py-2 bg-blue-900 rounded text-xs font-black tracking-wider hover:bg-blue-800 transition uppercase border border-blue-700">📻 Radio Online</button>
+      <button onclick="switchTab('news')" class="px-4 py-2 bg-blue-900 rounded text-xs font-black tracking-wider hover:bg-blue-800 transition uppercase border border-blue-700">📰 Noticias</button>
+      <button onclick="toggleAdminModal()" class="px-3 py-2 bg-gray-900 border border-gray-700 rounded text-xs text-gray-300 hover:bg-gray-800">⚙️ Admin</button>
     </nav>
   </header>
 
@@ -87,47 +84,66 @@
   <div id="top-banner-container" class="w-full bg-black text-center py-1"></div>
 
   <!-- CONTENIDO PRINCIPAL -->
-  <main class="flex-1 max-w-6xl w-full mx-auto p-4">
+  <main class="flex-1 max-w-6xl w-full mx-auto p-2 sm:p-4 flex flex-col justify-center">
 
-    <!-- SECCIÓN TV CONTINUA -->
-    <section id="section-tv" class="space-y-4">
-      <div class="video-container relative bg-black rounded-lg overflow-hidden shadow-2xl aspect-video max-w-4xl mx-auto border border-gray-800">
-        <img id="player-watermark" src="" class="absolute top-4 right-4 z-20 h-10 w-auto opacity-80 pointer-events-none select-none hidden">
-        <div class="absolute top-4 left-4 z-20 bg-red-600 text-xs font-bold px-2 py-1 rounded flex items-center space-x-1">
-          <span class="w-2 h-2 bg-white rounded-full animate-ping"></span>
-          <span>EN VIVO 24/7</span>
+    <!-- SECCIÓN TV TIPO SET NOTICIERO -->
+    <section id="section-tv" class="space-y-0">
+      <div class="relative bg-black rounded-t-xl overflow-hidden shadow-2xl aspect-video max-w-5xl mx-auto border-t border-x border-blue-900">
+        
+        <!-- LOGO/MARCA DE AGUA FLOTANTE -->
+        <div class="absolute top-4 left-4 z-20 flex items-center space-x-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded border border-white/10">
+          <img id="player-watermark" src="" class="h-6 w-auto object-contain hidden">
+          <span class="text-xs font-black text-white tracking-wide">CANAL TV & RADIO</span>
         </div>
-        
+
+        <!-- INSIGNIA "EN VIVO" SUPERIOR DERECHA -->
+        <div class="absolute top-4 right-16 z-20 bg-red-600 text-white text-xs font-black px-3 py-1 rounded shadow flex items-center space-x-1.5 animate-pulse">
+          <span class="w-2 h-2 bg-white rounded-full"></span>
+          <span>EN VIVO</span>
+        </div>
+
+        <!-- BOTÓN PANTALLA COMPLETA -->
+        <button onclick="toggleFullScreen()" class="fullscreen-btn">⛶</button>
+
+        <!-- REPRODUCTOR VIDEO -->
         <video id="tv-player" class="w-full h-full object-contain" playsinline webkit-playsinline muted></video>
-        
-        <button onclick="toggleFullScreen()" class="fullscreen-btn">⛶ Pantalla Completa</button>
       </div>
 
-      <div class="max-w-4xl mx-auto bg-gray-800 border border-gray-700 rounded-lg p-3 shadow-lg flex items-center justify-between overflow-hidden">
-        <div id="ad-slider-container" class="w-full flex items-center justify-center space-x-4 transition-all duration-500">
-          <img id="ad-slider-img" src="https://i.ibb.co/DP9n4Fh0/Dise-o-sin-t-tulo-4.png" class="h-12 w-auto object-contain">
-          <span id="ad-slider-text" class="text-sm md:text-base font-bold text-yellow-400 tracking-wide">
-            📢 ¡ANÚNCIATE AQUÍ! - TU MARCA AQUÍ 24/7
-          </span>
+      <!-- CINTILLO INFORMATIVO NOTICIERO (IGUAL A LA IMAGEN) -->
+      <div class="max-w-5xl mx-auto bg-blue-950 border-b border-x border-blue-800 rounded-b-xl overflow-hidden shadow-xl">
+        <!-- BARRA PRINCIPAL -->
+        <div class="flex items-stretch bg-gradient-to-r from-blue-950 via-blue-900 to-blue-950 text-white border-t border-blue-700">
+          <!-- HORA EN BLOQUE NARANJA -->
+          <div id="live-clock" class="bg-orange-600 text-white font-black px-4 py-2 text-sm flex items-center justify-center border-r border-orange-500">
+            14:35
+          </div>
+          <!-- TÍTULO CANAL -->
+          <div class="flex items-center px-4 font-black text-sm tracking-wide text-white uppercase border-r border-blue-800">
+            CANAL TV & RADIO (EN LÍNEA 24/7)
+          </div>
+          <!-- MARQUESINA / URL DE TRANSMISIÓN -->
+          <div class="flex-1 overflow-hidden flex items-center px-4 bg-black/40 text-xs font-mono text-cyan-300">
+            <span id="ad-slider-text" class="truncate font-semibold">https://streamtvonline.github.io/canal-tv-radio/</span>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- SECCIÓN RADIO EN LÍNEA CONTINUA (REPRODUCTOR DE ARCHIVE.ORG) -->
-    <section id="section-radio" class="hidden space-y-6 text-center py-12 bg-gray-800 rounded-xl my-4 border border-gray-700 shadow-2xl">
+    <!-- SECCIÓN RADIO EN LÍNEA CONTINUA -->
+    <section id="section-radio" class="hidden space-y-6 text-center py-12 bg-blue-950/60 rounded-xl my-4 border border-blue-800 shadow-2xl">
       <div class="max-w-md mx-auto space-y-4 px-4">
-        <div class="w-32 h-32 mx-auto rounded-full bg-gradient-to-tr from-purple-600 to-red-500 flex items-center justify-center shadow-lg animate-pulse">
+        <div class="w-28 h-28 mx-auto rounded-full bg-gradient-to-tr from-blue-600 to-red-600 flex items-center justify-center shadow-2xl animate-pulse">
           <span class="text-5xl">📻</span>
         </div>
-        <h2 class="text-2xl font-bold">Radio En Línea 24 Horas</h2>
-        <div class="inline-flex items-center space-x-2 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
+        <h2 class="text-2xl font-black uppercase tracking-wider">Radio En Línea 24 Horas</h2>
+        <div class="inline-flex items-center space-x-2 bg-red-600 text-white text-xs font-black px-3 py-1 rounded-full animate-pulse">
           <span class="w-2 h-2 bg-white rounded-full"></span>
           <span>TRANSMITIENDO EN VIVO</span>
         </div>
-        <p id="radio-status" class="text-yellow-400 font-semibold text-sm">Sintonizando señal de radio...</p>
+        <p id="radio-status" class="text-cyan-300 font-semibold text-sm">Sintonizando señal de radio...</p>
 
         <!-- REPRODUCTOR INDEPENDIENTE DE RADIO -->
-        <div class="bg-gray-900 p-4 rounded-xl border border-gray-700 shadow-inner">
+        <div class="bg-black/80 p-4 rounded-xl border border-blue-900 shadow-inner">
           <audio id="radio-player" controls preload="metadata" class="w-full"></audio>
         </div>
       </div>
@@ -135,7 +151,7 @@
 
     <!-- SECCIÓN NOTICIAS / BLOG -->
     <section id="section-news" class="hidden space-y-6">
-      <h2 class="text-2xl font-bold border-b border-gray-700 pb-2">Últimas Noticias y Blog</h2>
+      <h2 class="text-2xl font-black border-b border-blue-900 pb-2 uppercase tracking-wide">Últimas Noticias</h2>
       <div id="news-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </section>
 
@@ -143,50 +159,50 @@
 
   <!-- MODAL DEL PANEL DE ADMINISTRACIÓN -->
   <div id="admin-modal" class="fixed inset-0 bg-black/80 hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-gray-800 border border-gray-700 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 rounded-xl space-y-6 relative">
+    <div class="bg-gray-900 border border-gray-700 w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 rounded-xl space-y-6 relative">
       <button onclick="toggleAdminModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white font-bold text-xl">&times;</button>
       
       <div id="login-screen" class="max-w-sm mx-auto space-y-4 py-8">
         <h2 class="text-2xl font-bold text-center">Acceso Administrador</h2>
         <div>
           <label class="block text-sm mb-1">Usuario</label>
-          <input type="text" id="login-user" class="w-full p-2 bg-gray-700 rounded border border-gray-600">
+          <input type="text" id="login-user" class="w-full p-2 bg-gray-800 rounded border border-gray-700">
         </div>
         <div>
           <label class="block text-sm mb-1">Contraseña</label>
-          <input type="password" id="login-pass" class="w-full p-2 bg-gray-700 rounded border border-gray-600">
+          <input type="password" id="login-pass" class="w-full p-2 bg-gray-800 rounded border border-gray-700">
         </div>
         <button onclick="login()" class="w-full bg-red-600 hover:bg-red-700 py-2 rounded font-bold">Ingresar</button>
         <p id="login-error" class="text-red-500 text-sm hidden text-center">Credenciales incorrectas.</p>
       </div>
 
       <div id="admin-panel" class="hidden space-y-6">
-        <div class="flex justify-between items-center border-b border-gray-700 pb-3">
+        <div class="flex justify-between items-center border-b border-gray-800 pb-3">
           <h2 class="text-xl font-bold">Panel de Gestión General</h2>
-          <button onclick="logout()" class="bg-gray-700 px-3 py-1 rounded text-xs">Cerrar Sesión</button>
+          <button onclick="logout()" class="bg-gray-800 px-3 py-1 rounded text-xs">Cerrar Sesión</button>
         </div>
 
-        <div class="bg-gray-900 p-4 rounded border border-gray-700 space-y-2">
+        <div class="bg-black/60 p-4 rounded border border-gray-800 space-y-2">
           <h3 class="font-bold text-red-400">🔴 Parámetros para OBS Studio</h3>
           <p class="text-xs text-gray-400">Servidor RTMP: <span class="text-yellow-400 font-mono">rtmp://rtmp.stream/live</span></p>
           <p class="text-xs text-gray-400">Clave de Transmisión: <span class="text-yellow-400 font-mono">live_stream_key_2026</span></p>
         </div>
 
-        <div class="space-y-2 bg-gray-900/50 p-4 rounded border border-gray-700">
+        <div class="space-y-2 bg-black/40 p-4 rounded border border-gray-800">
           <h3 class="font-bold text-red-400">📺 Programación TV 24/7 (Archive.org MP4)</h3>
           <div class="flex space-x-2">
-            <input type="text" id="tv-title" placeholder="Título Programa TV" class="w-1/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
-            <input type="text" id="tv-url" placeholder="URL directa MP4" class="w-2/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
+            <input type="text" id="tv-title" placeholder="Título Programa TV" class="w-1/3 p-2 bg-gray-800 rounded border border-gray-700 text-sm">
+            <input type="text" id="tv-url" placeholder="URL directa MP4" class="w-2/3 p-2 bg-gray-800 rounded border border-gray-700 text-sm">
             <button onclick="addTvProgram()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-bold text-sm">Añadir</button>
           </div>
           <ul id="tv-list" class="space-y-1 max-h-32 overflow-y-auto pt-2"></ul>
         </div>
 
-        <div class="space-y-2 bg-gray-900/50 p-4 rounded border border-gray-700">
+        <div class="space-y-2 bg-black/40 p-4 rounded border border-gray-800">
           <h3 class="font-bold text-purple-400">📻 Programación Radio 24/7 (Archive.org MP3)</h3>
           <div class="flex space-x-2">
-            <input type="text" id="radio-title" placeholder="Título Audio Radio" class="w-1/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
-            <input type="text" id="radio-url" placeholder="URL directa MP3 de Archive.org" class="w-2/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
+            <input type="text" id="radio-title" placeholder="Título Audio Radio" class="w-1/3 p-2 bg-gray-800 rounded border border-gray-700 text-sm">
+            <input type="text" id="radio-url" placeholder="URL directa MP3 de Archive.org" class="w-2/3 p-2 bg-gray-800 rounded border border-gray-700 text-sm">
             <button onclick="addRadioProgram()" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded font-bold text-sm">Añadir</button>
           </div>
           <ul id="radio-list" class="space-y-1 max-h-32 overflow-y-auto pt-2"></ul>
@@ -195,17 +211,17 @@
         <div class="space-y-2">
           <h3 class="font-bold">🖼️ Logo y Banners</h3>
           <div class="grid grid-cols-2 gap-2">
-            <input type="text" id="input-logo" placeholder="URL Directa Logo PNG" class="p-2 bg-gray-700 rounded border border-gray-600 text-sm">
-            <input type="text" id="input-banner-top" placeholder="URL Directa Banner JPG/GIF" class="p-2 bg-gray-700 rounded border border-gray-600 text-sm">
+            <input type="text" id="input-logo" placeholder="URL Directa Logo PNG" class="p-2 bg-gray-800 rounded border border-gray-700 text-sm">
+            <input type="text" id="input-banner-top" placeholder="URL Directa Banner JPG/GIF" class="p-2 bg-gray-800 rounded border border-gray-700 text-sm">
           </div>
           <button onclick="saveBannersAndLogo()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded font-bold text-sm">Guardar Cambios</button>
         </div>
 
         <div class="space-y-2">
           <h3 class="font-bold">📰 Crear Noticia / Blog</h3>
-          <input type="text" id="news-title" placeholder="Título" class="w-full p-2 bg-gray-700 rounded border border-gray-600 text-sm">
-          <input type="text" id="news-img" placeholder="URL Imagen" class="w-full p-2 bg-gray-700 rounded border border-gray-600 text-sm">
-          <textarea id="news-body" rows="2" placeholder="Contenido..." class="w-full p-2 bg-gray-700 rounded border border-gray-600 text-sm"></textarea>
+          <input type="text" id="news-title" placeholder="Título" class="w-full p-2 bg-gray-800 rounded border border-gray-700 text-sm">
+          <input type="text" id="news-img" placeholder="URL Imagen" class="w-full p-2 bg-gray-800 rounded border border-gray-700 text-sm">
+          <textarea id="news-body" rows="2" placeholder="Contenido..." class="w-full p-2 bg-gray-800 rounded border border-gray-700 text-sm"></textarea>
           <button onclick="addNews()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-bold text-sm">Publicar Noticia</button>
         </div>
       </div>
@@ -213,8 +229,8 @@
     </div>
   </div>
 
-  <footer class="bg-gray-800 text-center py-4 text-xs text-gray-500 border-t border-gray-700">
-    &copy; 2026 Canal de TV & Radio en Línea - Transmisión Continua 24/7
+  <footer class="bg-blue-950/80 text-center py-3 text-xs text-gray-400 border-t border-blue-900">
+    &copy; 2026 CANAL TV & RADIO (EN LÍNEA 24/7) - Transmisión Digital Continua
   </footer>
 
   <script>
@@ -233,6 +249,16 @@
     let radioPlaylist = JSON.parse(localStorage.getItem('radioPlaylist')) || [
       { title: "Disco 70s & 80s Greatest Hits", url: "https://archive.org/download/golden-70s-80s-disco-greatest-dance-floor-classics-ultimate-non-stop-party-hits/GOLDEN%2070s%20%26%2080s%20DISCO%20GREATEST%20DANCE%20FLOOR%20CLASSICS%20ULTIMATE%20NON-STOP%20PARTY%20HITS.mp3" }
     ];
+
+    // RELOJ EN TIEMPO REAL
+    function updateClock() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('live-clock').innerText = `${hours}:${minutes}`;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
 
     function unlockAudio() {
       document.getElementById('audio-unlock-overlay').classList.add('hidden');
@@ -399,14 +425,14 @@
 
     function renderAdminLists() {
       document.getElementById('tv-list').innerHTML = tvPlaylist.map((item, idx) => `
-        <li class="flex justify-between items-center bg-gray-700 p-2 rounded text-xs">
+        <li class="flex justify-between items-center bg-gray-800 p-2 rounded text-xs">
           <span>📺 ${item.title}</span>
           <button onclick="removeTv(${idx})" class="text-red-400 font-bold hover:underline">Eliminar</button>
         </li>
       `).join('');
 
       document.getElementById('radio-list').innerHTML = radioPlaylist.map((item, idx) => `
-        <li class="flex justify-between items-center bg-gray-700 p-2 rounded text-xs">
+        <li class="flex justify-between items-center bg-gray-800 p-2 rounded text-xs">
           <span>📻 ${item.title}</span>
           <button onclick="removeRadio(${idx})" class="text-red-400 font-bold hover:underline">Eliminar</button>
         </li>
@@ -458,33 +484,15 @@
     function loadNews() {
       const news = JSON.parse(localStorage.getItem('newsList')) || [];
       document.getElementById('news-grid').innerHTML = news.map(item => `
-        <div class="bg-gray-800 rounded-lg overflow-hidden border border-gray-700 shadow-lg">
+        <div class="bg-blue-950/60 rounded-lg overflow-hidden border border-blue-900 shadow-lg">
           <img src="${item.img}" class="w-full h-48 object-cover">
           <div class="p-4 space-y-2">
-            <h3 class="font-bold text-lg">${item.title}</h3>
+            <h3 class="font-bold text-lg text-white">${item.title}</h3>
             <p class="text-sm text-gray-300">${item.body}</p>
           </div>
         </div>
       `).join('');
     }
-
-    // Slider Banners
-    const ads = [
-      { text: "📢 ¡ANÚNCIATE AQUÍ! - TU MARCA AQUÍ 24/7", img: "https://i.ibb.co/DP9n4Fh0/Dise-o-sin-t-tulo-4.png" },
-      { text: "🚀 IMPULSA TU NEGOCIO CON NOSOTROS", img: "https://i.ibb.co/DP9n4Fh0/Dise-o-sin-t-tulo-4.png" }
-    ];
-    let currentAdIndex = 0;
-
-    setInterval(() => {
-      const container = document.getElementById('ad-slider-container');
-      container.style.opacity = '0';
-      setTimeout(() => {
-        currentAdIndex = (currentAdIndex + 1) % ads.length;
-        document.getElementById('ad-slider-text').innerText = ads[currentAdIndex].text;
-        document.getElementById('ad-slider-img').src = ads[currentAdIndex].img;
-        container.style.opacity = '1';
-      }, 500);
-    }, 6000);
 
     window.addEventListener('DOMContentLoaded', () => {
       const logo = localStorage.getItem('channelLogo');
