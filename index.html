@@ -19,17 +19,6 @@
       display: none !important;
     }
 
-    /* Ocultar barra de tiempo en Radio */
-    audio::-webkit-media-controls-timeline,
-    audio::-webkit-media-controls-current-time-display,
-    audio::-webkit-media-controls-time-remaining-display {
-      display: none !important;
-    }
-
-    audio::-moz-media-controls-timeline {
-      display: none !important;
-    }
-
     .video-container {
       position: relative;
     }
@@ -57,7 +46,7 @@
 </head>
 <body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
 
-  <!-- CAPA INICIAL PARA ACTIVAR AUDIO EN CELULARES Y PC -->
+  <!-- CAPA INICIAL PARA ACTIVAR AUDIO -->
   <div id="audio-unlock-overlay" class="fixed inset-0 bg-black/90 z-50 flex flex-col items-center justify-center p-6 text-center space-y-4">
     <div class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center animate-bounce shadow-lg">
       <span class="text-4xl">🔊</span>
@@ -89,7 +78,7 @@
   <!-- CONTENIDO PRINCIPAL -->
   <main class="flex-1 max-w-6xl w-full mx-auto p-4">
 
-    <!-- SECCIÓN TV CONTINUA -->
+    <!-- SECCIÓN TV CONTINUA (INTACTA Y FUNCIONAL) -->
     <section id="section-tv" class="space-y-4">
       <div class="video-container relative bg-black rounded-lg overflow-hidden shadow-2xl aspect-video max-w-4xl mx-auto border border-gray-800">
         <img id="player-watermark" src="" class="absolute top-4 right-4 z-20 h-10 w-auto opacity-80 pointer-events-none select-none hidden">
@@ -98,7 +87,6 @@
           <span>EN VIVO 24/7</span>
         </div>
         
-        <!-- REPRODUCTOR ÚNICO DE TV -->
         <video id="tv-player" class="w-full h-full object-contain" playsinline webkit-playsinline muted></video>
         
         <button onclick="toggleFullScreen()" class="fullscreen-btn">⛶ Pantalla Completa</button>
@@ -114,22 +102,21 @@
       </div>
     </section>
 
-    <!-- SECCIÓN RADIO EN LÍNEA CONTINUA -->
-    <section id="section-radio" class="hidden space-y-6 text-center py-12 bg-gray-800 rounded-xl my-4 border border-gray-700 shadow-2xl">
+    <!-- SECCIÓN RADIO EN LÍNEA (CON TU CÓDIGO EMBEBIDO ARCHIVE.ORG) -->
+    <section id="section-radio" class="hidden space-y-6 text-center py-8 bg-gray-800 rounded-xl my-4 border border-gray-700 shadow-2xl">
       <div class="max-w-md mx-auto space-y-4 px-4">
-        <div class="w-32 h-32 mx-auto rounded-full bg-gradient-to-tr from-purple-600 to-red-500 flex items-center justify-center shadow-lg animate-pulse">
-          <span class="text-5xl">📻</span>
+        <div class="w-24 h-24 mx-auto rounded-full bg-gradient-to-tr from-purple-600 to-red-500 flex items-center justify-center shadow-lg animate-pulse">
+          <span class="text-4xl">📻</span>
         </div>
         <h2 class="text-2xl font-bold">Radio En Línea 24 Horas</h2>
         <div class="inline-flex items-center space-x-2 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse">
           <span class="w-2 h-2 bg-white rounded-full"></span>
           <span>TRANSMITIENDO EN VIVO</span>
         </div>
-        <p id="radio-status" class="text-yellow-400 font-semibold text-sm">Sintonizando señal de radio...</p>
-
-        <!-- REPRODUCTOR INDEPENDIENTE DE RADIO -->
-        <div class="bg-gray-900 p-4 rounded-xl border border-gray-700 shadow-inner">
-          <audio id="radio-player" controls preload="metadata" class="w-full"></audio>
+        
+        <!-- REPRODUCTOR EMBEBIDO INTEGRADO -->
+        <div class="w-full bg-black rounded-lg overflow-hidden border border-gray-700 p-2 shadow-inner flex justify-center items-center">
+          <iframe src="https://archive.org/embed/golden-70s-80s-disco-greatest-dance-floor-classics-ultimate-non-stop-party-hits" width="500" height="30" frameborder="0" webkitallowfullscreen="true" mozallowfullscreen="true" allowfullscreen></iframe>
         </div>
       </div>
     </section>
@@ -183,16 +170,6 @@
           <ul id="tv-list" class="space-y-1 max-h-32 overflow-y-auto pt-2"></ul>
         </div>
 
-        <div class="space-y-2 bg-gray-900/50 p-4 rounded border border-gray-700">
-          <h3 class="font-bold text-purple-400">📻 Programación Radio 24/7 (Archive.org MP3)</h3>
-          <div class="flex space-x-2">
-            <input type="text" id="radio-title" placeholder="Título Audio Radio" class="w-1/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
-            <input type="text" id="radio-url" placeholder="URL directa MP3" class="w-2/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
-            <button onclick="addRadioProgram()" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded font-bold text-sm">Añadir</button>
-          </div>
-          <ul id="radio-list" class="space-y-1 max-h-32 overflow-y-auto pt-2"></ul>
-        </div>
-
         <div class="space-y-2">
           <h3 class="font-bold">🖼️ Logo y Banners</h3>
           <div class="grid grid-cols-2 gap-2">
@@ -223,16 +200,10 @@
     const ADMIN_PASS = "programacion26%";
 
     const tvPlayer = document.getElementById('tv-player');
-    const radioPlayer = document.getElementById('radio-player');
 
     let currentTvIndex = parseInt(localStorage.getItem('tvCurrentIndex')) || 0;
     let tvPlaylist = JSON.parse(localStorage.getItem('tvPlaylist')) || [
       { title: "Programa Demo Archive.org", url: "https://archive.org/download/BigBuckBunny_124/Content/big_buck_bunny_720p_surround.mp4" }
-    ];
-
-    let currentRadioIndex = parseInt(localStorage.getItem('radioCurrentIndex')) || 0;
-    let radioPlaylist = JSON.parse(localStorage.getItem('radioPlaylist')) || [
-      { title: "Disco 70s & 80s Greatest Hits", url: "https://archive.org/download/golden-70s-80s-disco-greatest-dance-floor-classics-ultimate-non-stop-party-hits/GOLDEN%2070s%20%26%2080s%20DISCO%20GREATEST%20DANCE%20FLOOR%20CLASSICS%20ULTIMATE%20NON-STOP%20PARTY%20HITS.mp3" }
     ];
 
     function unlockAudio() {
@@ -275,43 +246,6 @@
       }, 3000);
     });
 
-    // GESTIÓN DE RADIO
-    function loadRadioSource() {
-      if (radioPlaylist.length === 0) return;
-      if (currentRadioIndex >= radioPlaylist.length) currentRadioIndex = 0;
-
-      const current = radioPlaylist[currentRadioIndex];
-      if (radioPlayer.src !== current.url) {
-        radioPlayer.src = current.url;
-      }
-      document.getElementById('radio-status').innerText = "Programa actual: " + current.title;
-
-      const savedRadioTime = parseFloat(localStorage.getItem('radioCurrentTime')) || 0;
-
-      radioPlayer.addEventListener('loadedmetadata', function onRadioMetadata() {
-        if (savedRadioTime < radioPlayer.duration && radioPlayer.currentTime === 0) {
-          radioPlayer.currentTime = savedRadioTime;
-        }
-        radioPlayer.removeEventListener('loadedmetadata', onRadioMetadata);
-      });
-    }
-
-    radioPlayer.addEventListener('timeupdate', () => {
-      localStorage.setItem('radioCurrentTime', radioPlayer.currentTime);
-      localStorage.setItem('radioCurrentIndex', currentRadioIndex);
-    });
-
-    radioPlayer.addEventListener('ended', () => {
-      localStorage.setItem('radioCurrentTime', 0);
-      document.getElementById('radio-status').innerText = "Cargando siguiente tema en 3 segundos...";
-      setTimeout(() => {
-        currentRadioIndex = (currentRadioIndex + 1) % radioPlaylist.length;
-        localStorage.setItem('radioCurrentIndex', currentRadioIndex);
-        loadRadioSource();
-        radioPlayer.play().catch(() => {});
-      }, 3000);
-    });
-
     function toggleFullScreen() {
       if (!document.fullscreenElement) {
         if (tvPlayer.requestFullscreen) tvPlayer.requestFullscreen();
@@ -328,10 +262,8 @@
       document.getElementById(`section-${tab}`).classList.remove('hidden');
 
       if (tab === 'radio') {
-        tvPlayer.muted = true; // Silenciar TV para darle audio a la radio
-        loadRadioSource();
+        tvPlayer.muted = true;
       } else if (tab === 'tv') {
-        radioPlayer.pause(); // Pausar radio al volver a la TV
         tvPlayer.muted = false;
         tvPlayer.play().catch(() => {});
       }
@@ -377,37 +309,11 @@
       renderAdminLists();
     }
 
-    function addRadioProgram() {
-      const title = document.getElementById('radio-title').value;
-      const url = document.getElementById('radio-url').value;
-      if (!title || !url) return;
-
-      radioPlaylist.push({ title, url });
-      localStorage.setItem('radioPlaylist', JSON.stringify(radioPlaylist));
-      document.getElementById('radio-title').value = '';
-      document.getElementById('radio-url').value = '';
-      renderAdminLists();
-      loadRadioSource();
-    }
-
-    function removeRadio(idx) {
-      radioPlaylist.splice(idx, 1);
-      localStorage.setItem('radioPlaylist', JSON.stringify(radioPlaylist));
-      renderAdminLists();
-    }
-
     function renderAdminLists() {
       document.getElementById('tv-list').innerHTML = tvPlaylist.map((item, idx) => `
         <li class="flex justify-between items-center bg-gray-700 p-2 rounded text-xs">
           <span>📺 ${item.title}</span>
           <button onclick="removeTv(${idx})" class="text-red-400 font-bold hover:underline">Eliminar</button>
-        </li>
-      `).join('');
-
-      document.getElementById('radio-list').innerHTML = radioPlaylist.map((item, idx) => `
-        <li class="flex justify-between items-center bg-gray-700 p-2 rounded text-xs">
-          <span>📻 ${item.title}</span>
-          <button onclick="removeRadio(${idx})" class="text-red-400 font-bold hover:underline">Eliminar</button>
         </li>
       `).join('');
     }
@@ -500,7 +406,6 @@
 
       loadNews();
       playTv();
-      loadRadioSource();
     });
   </script>
 </body>
