@@ -19,7 +19,7 @@
       display: none !important;
     }
 
-    /* Ocultar barra de tiempo y duraciones en el reproductor de Radio */
+    /* Ocultar barra de tiempo en Radio */
     audio::-webkit-media-controls-timeline,
     audio::-webkit-media-controls-current-time-display,
     audio::-webkit-media-controls-time-remaining-display {
@@ -57,17 +57,29 @@
 </head>
 <body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
 
+  <!-- CAPA PARA UNIR INTERACCIÓN MÓVIL Y DESBLOQUEAR AUDIO -->
+  <div id="audio-unlock-overlay" class="fixed inset-0 bg-black/90 z-50 flex flex-col items-center justify-center p-6 text-center space-y-4">
+    <div class="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center animate-bounce shadow-lg">
+      <span class="text-4xl">🔊</span>
+    </div>
+    <h2 class="text-2xl font-bold">Bienvenido a la Transmisión 24/7</h2>
+    <p class="text-gray-300 text-sm max-w-sm">Para escuchar la TV y la Radio en tu celular sin interrupciones, toca el botón de abajo para activar el sonido.</p>
+    <button onclick="unlockAudio()" class="px-8 py-3 bg-red-600 hover:bg-red-700 rounded-full font-bold text-lg shadow-xl transition transform active:scale-95">
+      ▶️ ACTIVAR SEÑAL Y AUDIO
+    </button>
+  </div>
+
   <!-- ENCABEZADO Y NAVEGACIÓN -->
-  <header class="bg-gray-800 border-b border-gray-700 p-4 flex justify-between items-center sticky top-0 z-50">
+  <header class="bg-gray-800 border-b border-gray-700 p-4 flex justify-between items-center sticky top-0 z-40">
     <div class="flex items-center space-x-3">
       <img id="channel-logo" src="" alt="Logo" class="h-10 w-auto object-contain hidden">
       <h1 class="text-xl font-bold hidden sm:inline" id="channel-title">Mi Canal TV & Radio</h1>
     </div>
     <nav class="flex space-x-2">
-      <button onclick="switchTab('tv')" class="px-4 py-2 bg-red-600 rounded-lg font-semibold hover:bg-red-700 transition">📺 TV en Vivo</button>
-      <button onclick="switchTab('radio')" class="px-4 py-2 bg-gray-700 rounded-lg font-semibold hover:bg-gray-600 transition">📻 Radio Online</button>
-      <button onclick="switchTab('news')" class="px-4 py-2 bg-gray-700 rounded-lg font-semibold hover:bg-gray-600 transition">📰 Noticias</button>
-      <button onclick="toggleAdminModal()" class="px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-sm text-gray-300 hover:bg-gray-700">⚙️ Admin</button>
+      <button onclick="switchTab('tv')" class="px-3 py-2 bg-red-600 rounded-lg text-sm font-semibold hover:bg-red-700 transition">📺 TV</button>
+      <button onclick="switchTab('radio')" class="px-3 py-2 bg-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-600 transition">📻 Radio</button>
+      <button onclick="switchTab('news')" class="px-3 py-2 bg-gray-700 rounded-lg text-sm font-semibold hover:bg-gray-600 transition">📰 Noticias</button>
+      <button onclick="toggleAdminModal()" class="px-2 py-2 bg-gray-800 border border-gray-600 rounded-lg text-xs text-gray-300 hover:bg-gray-700">⚙️ Admin</button>
     </nav>
   </header>
 
@@ -85,7 +97,10 @@
           <span class="w-2 h-2 bg-white rounded-full animate-ping"></span>
           <span>EN VIVO 24/7</span>
         </div>
-        <video id="tv-player" class="w-full h-full object-contain" autoplay playsinline muted></video>
+        
+        <!-- REPRODUCTOR DE VIDEO CON COMPATIBILIDAD MOBILE -->
+        <video id="tv-player" class="w-full h-full object-contain" autoplay playsinline webkit-playsinline muted></video>
+
         <button onclick="toggleFullScreen()" class="fullscreen-btn">⛶ Pantalla Completa</button>
       </div>
 
@@ -99,7 +114,7 @@
       </div>
     </section>
 
-    <!-- SECCIÓN RADIO EN LÍNEA CONTINUA SIN BARRA DE TIEMPO -->
+    <!-- SECCIÓN RADIO EN LÍNEA CONTINUA -->
     <section id="section-radio" class="hidden space-y-6 text-center py-12 bg-gray-800 rounded-xl my-4 border border-gray-700 shadow-2xl">
       <div class="max-w-md mx-auto space-y-4 px-4">
         <div class="w-32 h-32 mx-auto rounded-full bg-gradient-to-tr from-purple-600 to-red-500 flex items-center justify-center shadow-lg animate-pulse">
@@ -112,7 +127,6 @@
         </div>
         <p id="radio-status" class="text-yellow-400 font-semibold text-sm">Sintonizando programación en vivo...</p>
         
-        <!-- REPRODUCTOR DE RADIO CONTINUO SIN TIEMPO -->
         <audio id="radio-player" controls autoplay class="w-full rounded-lg"></audio>
       </div>
     </section>
@@ -160,7 +174,7 @@
           <h3 class="font-bold text-red-400">📺 Programación TV 24/7 (Archive.org MP4)</h3>
           <div class="flex space-x-2">
             <input type="text" id="tv-title" placeholder="Título Programa TV" class="w-1/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
-            <input type="text" id="tv-url" placeholder="URL directa MP4 de Archive.org" class="w-2/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
+            <input type="text" id="tv-url" placeholder="URL directa MP4" class="w-2/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
             <button onclick="addTvProgram()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded font-bold text-sm">Añadir</button>
           </div>
           <ul id="tv-list" class="space-y-1 max-h-32 overflow-y-auto pt-2"></ul>
@@ -169,8 +183,8 @@
         <div class="space-y-2 bg-gray-900/50 p-4 rounded border border-gray-700">
           <h3 class="font-bold text-purple-400">📻 Programación Radio 24/7 (Archive.org MP3)</h3>
           <div class="flex space-x-2">
-            <input type="text" id="radio-title" placeholder="Título Audio/Programa Radio" class="w-1/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
-            <input type="text" id="radio-url" placeholder="URL directa MP3 de Archive.org" class="w-2/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
+            <input type="text" id="radio-title" placeholder="Título Audio Radio" class="w-1/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
+            <input type="text" id="radio-url" placeholder="URL directa MP3" class="w-2/3 p-2 bg-gray-700 rounded border border-gray-600 text-sm">
             <button onclick="addRadioProgram()" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded font-bold text-sm">Añadir</button>
           </div>
           <ul id="radio-list" class="space-y-1 max-h-32 overflow-y-auto pt-2"></ul>
@@ -180,7 +194,7 @@
           <h3 class="font-bold">🖼️ Logo y Banners</h3>
           <div class="grid grid-cols-2 gap-2">
             <input type="text" id="input-logo" placeholder="URL Directa Logo PNG" class="p-2 bg-gray-700 rounded border border-gray-600 text-sm">
-            <input type="text" id="input-banner-top" placeholder="URL Directa Banner GIF/JPG" class="p-2 bg-gray-700 rounded border border-gray-600 text-sm">
+            <input type="text" id="input-banner-top" placeholder="URL Directa Banner JPG/GIF" class="p-2 bg-gray-700 rounded border border-gray-600 text-sm">
           </div>
           <button onclick="saveBannersAndLogo()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded font-bold text-sm">Guardar Cambios</button>
         </div>
@@ -218,6 +232,27 @@
       { title: "Disco 70s & 80s Greatest Hits", url: "https://archive.org/download/golden-70s-80s-disco-greatest-dance-floor-classics-ultimate-non-stop-party-hits/GOLDEN%2070s%20%26%2080s%20DISCO%20GREATEST%20DANCE%20FLOOR%20CLASSICS%20ULTIMATE%20NON-STOP%20PARTY%20HITS.mp3" }
     ];
 
+    // DESBLOQUEO DE AUDIO PARA DISPOSITIVOS MÓVILES (ANDROID / IOS)
+    function unlockAudio() {
+      document.getElementById('audio-unlock-overlay').classList.add('hidden');
+      
+      // Habilitar audio en TV
+      tvPlayer.muted = false;
+      tvPlayer.play().catch(() => {});
+
+      // Habilitar audio en Radio
+      radioPlayer.play().catch(() => {});
+
+      // Registrar sesión multimedia para reproducción en segundo plano en smartphones
+      if ('mediaSession' in navigator) {
+        navigator.mediaSession.metadata = new MediaMetadata({
+          title: 'Transmisión 24/7',
+          artist: 'Mi Canal TV & Radio',
+          album: 'Señal en Vivo'
+        });
+      }
+    }
+
     function playTv() {
       if (tvPlaylist.length === 0) return;
       if (currentTvIndex >= tvPlaylist.length) currentTvIndex = 0;
@@ -251,7 +286,6 @@
       }, 3000);
     });
 
-    // REPRODUCCIÓN AUTOMÁTICA CONTINUA DE RADIO
     function playRadio() {
       if (radioPlaylist.length === 0) return;
       if (currentRadioIndex >= radioPlaylist.length) currentRadioIndex = 0;
@@ -269,9 +303,7 @@
         radioPlayer.removeEventListener('loadedmetadata', onRadioMetadata);
       });
 
-      radioPlayer.play().catch(() => {
-        console.log("Autoplay de audio en espera de interacción.");
-      });
+      radioPlayer.play().catch(() => {});
     }
 
     radioPlayer.addEventListener('timeupdate', () => {
@@ -439,7 +471,7 @@
       `).join('');
     }
 
-    // Animación Slider Publicitario
+    // Slider de Banners Animado
     const ads = [
       { text: "📢 ¡ANÚNCIATE AQUÍ! - TU MARCA AQUÍ 24/7", img: "https://i.ibb.co/DP9n4Fh0/Dise-o-sin-t-tulo-4.png" },
       { text: "🚀 IMPULSA TU NEGOCIO CON NOSOTROS", img: "https://i.ibb.co/DP9n4Fh0/Dise-o-sin-t-tulo-4.png" }
